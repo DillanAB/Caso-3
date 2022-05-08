@@ -228,7 +228,6 @@ string takeStringInstruction(string pStringD, vector<PathInstruction*> * pPathIn
         	if (asciiValue<=45 && stringIndex<=stringSize){
           	float number = stof(stringNumber);
             number = (negativeNumber) ? (number * -1):number;
-            //cout<<"El strNum: "<<number<<endl;
             positions.push_back(number);
             stringNumber = "";
             readingNumber = false;
