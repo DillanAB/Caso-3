@@ -99,8 +99,6 @@ public:
   }
 
     string convertToString(){
-      if(inverted)
-        invertInitFinalPoint();
       string strInstruction = "H ";
       strInstruction += to_string(finalX) + " ";
       return strInstruction;
@@ -139,8 +137,6 @@ public:
         finalY += initialY;
     }
     string convertToString(){
-      if(inverted)
-        invertInitFinalPoint();
       string strInstruction = "V ";
       strInstruction += to_string(finalY) + " ";
       return strInstruction;
@@ -154,9 +150,9 @@ public:
     Line(float pFinalX, float pFinalY){
         finalX = pFinalX;
         finalY = pFinalY;
+        type = (initialY<finalY) ? INCREASING:DECREASING;
     }
-    Line(float pInitialX, float pFinalX, float pFirstY, float pFinalY, string pColor){
-        color = pColor;
+    Line(float pInitialX, float pFinalX, float pFirstY, float pFinalY){
         initialX = pInitialX;
         finalX   = pFinalX;
         initialY = pFirstY;
@@ -199,8 +195,6 @@ public:
         finalX += initialX;
     }
     string convertToString(){
-      if(inverted)
-        invertInitFinalPoint();
       string strInstruction = "L ";
       strInstruction += to_string(initialX) + " " + to_string(initialY) + " ";
       strInstruction += to_string(finalX) + " " + to_string(finalY) + " ";
@@ -277,8 +271,6 @@ public:
         }
     }
     string convertToString(){
-      if(inverted)
-        invertInitFinalPoint();
       string strInstruction = "Q ";
       strInstruction += to_string(initialX) + " " + to_string(initialY) + " ";
       strInstruction += to_string(xControlPoint1) + " " + to_string(yControlPoint1) + " ";
@@ -359,8 +351,6 @@ public:
         }
     }
     string convertToString(){
-      if(inverted)
-        invertInitFinalPoint();
       string strInstruction = "T ";
       strInstruction += to_string(initialX) + " " + to_string(initialY) + " ";
       strInstruction += to_string(xControlPoint1) + " " + to_string(yControlPoint1) + " ";
@@ -372,17 +362,16 @@ public:
     }
 };
 
-
 class Movement: public PathInstruction{
 public:
   Movement(float pFinalX, float pFinalY){
-    initialX = pFinalX;
+    finalX = pFinalX;
     finalY = pFinalY;
   }
 
   bool isInRange(float pXPosition, float pYPosition){
-    bool inXRange = (abs(finalX-pXPosition)<NEAR_SIZE);
-    bool inYRange = (abs(finalY-pYPosition)<NEAR_SIZE);
+    bool inXRange = (abs(finalX-pXPosition)<=NEAR_SIZE);
+    bool inYRange = (abs(finalY-pYPosition)<=NEAR_SIZE);
     return (inXRange&&inYRange);
   }
 
@@ -433,13 +422,29 @@ public:
     }
 
     bool isInRange(float pXPosition, float pYPosition){
-        bool inXRange = (abs(finalX-pXPosition)<NEAR_SIZE);
-        bool inYRange = (abs(finalY-pYPosition)<NEAR_SIZE);
-        return (inXRange&&inYRange);
+        bool inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&finalX>=(pXPosition-NEAR_SIZE));
+        bool inYRange = (initialY<=(pYPosition+NEAR_SIZE)&&finalY>=(pYPosition-NEAR_SIZE));
+        bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
+        bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
+        return (inXRange&&(inCtr1Range||inCtr2Range));
     }
 
     void adjustSize(float pXPosition, float pYPosition){
-        return;
+        float minX  = pXPosition-NEAR_SIZE;
+        float maxX  = pXPosition+NEAR_SIZE;
+        float minY  = pYPosition-NEAR_SIZE;
+        float maxY  = pYPosition+NEAR_SIZE;
+
+        initialX = (initialX < minX)  ? minX:initialX;
+        finalX = (finalX > maxX) ? maxX:finalX;
+        initialY = (initialY < minY)  ? minY:initialY;
+        finalY = (finalY > maxY) ? maxY:finalY;
+
+        float xInflectionDistance = xControlPoint1-pXPosition;
+        xControlPoint1 += (xInflectionDistance>NEAR_SIZE) ? xInflectionDistance:0;
+
+        float yInflectionDistance = yControlPoint1-pYPosition;
+        yControlPoint1 += (yInflectionDistance>NEAR_SIZE) ? yInflectionDistance:0;
     }
 
     void convertToAbs(){
@@ -455,9 +460,90 @@ public:
     }
 
     string convertToString(){
-      if(inverted)
-        invertInitFinalPoint();
       string strInstruction = "C ";
+      strInstruction += to_string(initialX) + " " + to_string(initialY) + " ";
+      strInstruction += to_string(xControlPoint1) + " " + to_string(yControlPoint1) + " ";
+      if (doubleCtrPoint)
+        strInstruction += to_string(xControlPoint2) + " " + to_string(yControlPoint2) + " ";
+      
+      strInstruction += to_string(finalX) + " " + to_string(finalY) + " ";
+      return strInstruction;
+    }
+};
+
+class smoothCurveto: public PathInstruction{
+private:
+    bool doubleCtrPoint;
+    float xControlPoint1;
+    float yControlPoint1;
+    float xControlPoint2;
+    float yControlPoint2;
+public:
+    smoothCurveto(float pFinalX, float pFinalY, float pXPoint1, float pYPoint1){
+        finalX = pFinalX;
+        finalY = pFinalY;
+        xControlPoint1 = pXPoint1;
+        yControlPoint1 = pYPoint1;
+    }
+    smoothCurveto(float pFinalX, float pFinalY, float pXPoint1, float pYPoint1, float pXPoint2, float pYPoint2){
+        finalX = pFinalX;
+        finalY = pFinalY;
+        xControlPoint1 = pXPoint1;
+        yControlPoint1 = pYPoint1;
+        xControlPoint2 = pXPoint2;
+        yControlPoint2 = pYPoint2;
+    }
+
+    void setControlPoint1(float pX, float pY){
+        xControlPoint1 = pX;
+        yControlPoint1 = pY;
+    }
+    void setControlPoint2(float pX, float pY){
+        xControlPoint2 = pX;
+        yControlPoint2 = pY;
+    }
+
+    bool isInRange(float pXPosition, float pYPosition){
+        bool inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&finalX>=(pXPosition-NEAR_SIZE));
+        bool inYRange = (initialY<=(pYPosition+NEAR_SIZE)&&finalY>=(pYPosition-NEAR_SIZE));
+        //bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
+        //bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
+        //return (inXRange&&(inCtr1Range||inCtr2Range));
+        return (inXRange&&inYRange);
+    }
+
+    void adjustSize(float pXPosition, float pYPosition){
+        float minX  = pXPosition-NEAR_SIZE;
+        float maxX  = pXPosition+NEAR_SIZE;
+        float minY  = pYPosition-NEAR_SIZE;
+        float maxY  = pYPosition+NEAR_SIZE;
+
+        initialX = (initialX < minX)  ? minX:initialX;
+        finalX = (finalX > maxX) ? maxX:finalX;
+        initialY = (initialY < minY)  ? minY:initialY;
+        finalY = (finalY > maxY) ? maxY:finalY;
+
+        float xInflectionDistance = xControlPoint1-pXPosition;
+        xControlPoint1 += (xInflectionDistance>NEAR_SIZE) ? xInflectionDistance:0;
+
+        float yInflectionDistance = yControlPoint1-pYPosition;
+        yControlPoint1 += (yInflectionDistance>NEAR_SIZE) ? yInflectionDistance:0;
+    }
+    
+    void convertToAbs(){
+        finalY += initialY;
+        finalX += initialX;
+        xControlPoint1 += initialX;
+        yControlPoint1 += initialY;
+
+        if(doubleCtrPoint){
+            xControlPoint2 += initialX;
+            yControlPoint2 += initialY;
+        }
+    }
+
+    string convertToString(){
+      string strInstruction = "S ";
       strInstruction += to_string(initialX) + " " + to_string(initialY) + " ";
       strInstruction += to_string(xControlPoint1) + " " + to_string(yControlPoint1) + " ";
       if (doubleCtrPoint)
