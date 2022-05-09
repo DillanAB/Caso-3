@@ -2,7 +2,15 @@
 #include "PathInstruction.hpp"
 #define SVG_NAME "sample.svg"
 #define COLOR_FORMAT string
+#include "Routing.hpp"
+#include "Generator.hpp"
+
+
+string value;
+double height, width;
+
 using namespace std;
+
 
 bool isNear(float pPosition1, float pPosition2){
     float diference = abs(pPosition1 - pPosition2);
@@ -44,8 +52,8 @@ public:
 		cout<<"#Instructions: "<<instructions.size()<<endl;
 		for (unsigned int instIndex = 0; instIndex < instructions.size(); instIndex++){
 			cout<<"#"<<instIndex<<endl;
-			cout<<"Ix: "<<instructions[instIndex]->getInitialX()<<"Iy: "<<instructions[instIndex]->getInitialY()<<endl;
-			cout<<"Fx: "<<instructions[instIndex]->getFinalX()<<"Fy: "<<instructions[instIndex]->getFinalY()<<endl;
+			cout<<"Ix: "<<instructions[instIndex]->getInitialX()<<" Iy: "<<instructions[instIndex]->getInitialY()<<endl;
+			cout<<"Fx: "<<instructions[instIndex]->getFinalX()<<" Fy: "<<instructions[instIndex]->getFinalY()<<endl;
 		}
 		cout<<endl;
 	}
@@ -108,10 +116,10 @@ void callAbsoluteConstructor(char pInstructionType, vector<PathInstruction*> * p
     case 'S':
         vecSize = pDirections.size();
         if (vecSize>4){ //Wih two control points.
-            pPathInstructions->push_back(new Curveto(pDirections[4], pDirections[5], pDirections[0], pDirections[1], pDirections[2], pDirections[3]));
+            pPathInstructions->push_back(new smoothCurveto(pDirections[4], pDirections[5], pDirections[0], pDirections[1], pDirections[2], pDirections[3]));
         }
         else{ //Wih one control point.
-            pPathInstructions->push_back(new Curveto(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
+            pPathInstructions->push_back(new smoothCurveto(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
         }
         break;
 
@@ -126,6 +134,13 @@ void callAbsoluteConstructor(char pInstructionType, vector<PathInstruction*> * p
         break;
 
     case 'T':
+        vecSize = pDirections.size();
+        if (vecSize>4){ //Wih two control points.
+            pPathInstructions->push_back(new smoothCurveto(pDirections[4], pDirections[5], pDirections[0], pDirections[1], pDirections[2], pDirections[3]));
+        }
+        else{ //Wih one control point.
+            pPathInstructions->push_back(new smoothCurveto(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
+        }
         break;
 
     case 'A':
@@ -170,10 +185,10 @@ void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * 
     case 's':
         vecSize = pDirections.size();
         if (vecSize>4){ //Wih two control points.
-            pPathInstructions->push_back(new Curveto(pDirections[4], pDirections[5], pDirections[0], pDirections[1], pDirections[2], pDirections[3]));
+            pPathInstructions->push_back(new smoothCurveto(pDirections[4], pDirections[5], pDirections[0], pDirections[1], pDirections[2], pDirections[3]));
         }
         else{ //Wih one control point.
-            pPathInstructions->push_back(new Curveto(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
+            pPathInstructions->push_back(new smoothCurveto(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
         }
         break;
     
@@ -188,8 +203,14 @@ void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * 
         break;
 
     case 't':
+        vecSize = pDirections.size();
+        if (vecSize>4){ //Wih two control points.
+            pPathInstructions->push_back(new SmoothQuadratic(pDirections[4], pDirections[5], pDirections[0], pDirections[1], pDirections[2], pDirections[3]));
+        }
+        else{ //Wih one control point.
+            pPathInstructions->push_back(new SmoothQuadratic(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
+        }
         break; 
-
     case 'a':
         break;
 
@@ -224,11 +245,10 @@ string takeStringInstruction(string pStringD, vector<PathInstruction*> * pPathIn
         charString = pStringD[stringIndex];
         asciiValue = (int)charString;
 
-        if ((charString==' ' || asciiValue>=65 || stringIndex>=stringSize) && readingNumber){
+        if ((charString==' ' || charString==',' || asciiValue>=65 || stringIndex>=stringSize) && readingNumber){
         	if (asciiValue<=45 && stringIndex<=stringSize){
           	float number = stof(stringNumber);
             number = (negativeNumber) ? (number * -1):number;
-            //cout<<"El strNum: "<<number<<endl;
             positions.push_back(number);
             stringNumber = "";
             readingNumber = false;
@@ -238,7 +258,7 @@ string takeStringInstruction(string pStringD, vector<PathInstruction*> * pPathIn
             continueReading = (asciiValue>=65 || stringIndex>=stringSize) ? false:true;
           }
         }
-        if (asciiValue<=57){
+        if (asciiValue<=57 && charString!=','){
           if(charString == '-'){
             negativeNumber = true;
             continue;
@@ -321,9 +341,46 @@ void selectFromPath(SvgPath * pPath, float pXPoint, float pYPoint, vector<NewPat
   }
 }
 
+void assignValue(){
+   string widthSvg,highSVG;
+    bool control = false;
 
+  for(int i = 4; i < value.size(); i++){
+    if((isdigit(value[i]) || value[i] == '.') && control == false){
+      widthSvg += value[i];
+    }else if(isdigit(value[i]) || value[i] == '.'){
+      control = true;
+      highSVG += value[i];
+    }else
+      control = true;
+  }
+  height = stod(highSVG);
+  width = stod(widthSvg);
+//cout<<"Ancho: "<<width<<" Largo: "<<height;
+}
 
-//void 
+//Recorre el elemento raíz del documento
+void extractXMLData(xml_document<>* doc){
+  xml_node<>* node = doc->first_node();
+  for (xml_attribute<>* attrib = node->first_attribute(); attrib != NULL; attrib = attrib->next_attribute())
+  {
+    string atribute = attrib->name();
+    string val = attrib->value();
+    if(atribute == "viewBox")
+	{
+       value = attrib->value();
+       assignValue();
+    }
+    else if(atribute == "height")
+	{
+      height = stod(val);
+    }
+    else if(atribute == "width"){
+      width = stod(val);
+    }
+  }
+}
+
 
 int main(){
   /*
@@ -336,10 +393,14 @@ int main(){
     ins[i]->printValues();
   }*/
 
-  file<> file(SVG_NAME); // Lee y carga el archivo en memoria
-  xml_document<> svgDoc; //Raíz del árbol DOM
-  svgDoc.parse<0>(file.data()); //Parsea el XML en un DOM
+	file<> file(SVG_NAME); // Lee y carga el archivo en memoria
+	xml_document<> svgDoc; //Raíz del árbol DOM
+	svgDoc.parse<0>(file.data()); //Parsea el XML en un DOM
 	xml_node<>* pathNode = svgDoc.first_node();
+	
+
+	//Obtener ancho y largo de la imagen
+	extractXMLData(&svgDoc);
 
 	vector<SvgPath*> svgPathVector;
 	extractSvgPaths(pathNode, &svgPathVector);
@@ -347,21 +408,35 @@ int main(){
 	//cout<<svgPathVector.size()<<endl;
 
 	assignInitialPoints(svgPathVector[0]->getInstructions());
-
+	PathPoint p;
 	vector<NewPath> newPathVector;
 	for (int i = 0; i < svgPathVector.size();  i++){
-		selectFromPath(svgPathVector[i], 0, 0, &newPathVector);
+		selectFromPath(svgPathVector[i], 100, 150, &newPathVector);
 	}
+
+  
 	cout<<"Tam de newVec: "<<newPathVector.size()<<endl;
+	string figureName;
+	Figure f;
 	for (int i = 0; i < newPathVector.size();  i++){
-		//newPathVector[i].printAttributes();
+		newPathVector[i].printAttributes();
+		p.setXYInitial(newPathVector[i].getXIntersection(), newPathVector[i].getYIntersected());		
+		for(int j = 0; j < newPathVector[i].getInstructions().size(); j++){
+			figureName = newPathVector[i].getInstructions()[j]->getNameName();
+			f.type = figureName;
+			f.strokeWidth = newPathVector[i].getWidth();
+			f.color = newPathVector[i].getColor();
+			p.setVectorFiguras(f);
+		}
+		
 	}
 
-
-
+	routingFunction(&p, width,height, 360, 3);
+	cout<<"Luego del enrutamienro: "<<frameOrder.frames[0].size()<<endl;
 	
-
-
+	for(int i = 0; i < frameOrder.frames.size(); i++){
+		makeGeneration(frameOrder.frames[i]); 
+    }
 
   return 0;
 }
