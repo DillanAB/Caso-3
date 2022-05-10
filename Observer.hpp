@@ -256,9 +256,10 @@ public:
       //sortingFrames(p.getVectorVector());
       bool last = *(bool*)pPointer;
       if(last){
-         cout<<"ENTRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
          finalSorting(p.getVectorVector());
-         notify(0);
+         vector<Figure> figures = p.getFiguras();
+         cout<<"ENTRA : "<<figures.size()<<endl;
+         notify(&figures);
       }
       newPaths->clear();
    }

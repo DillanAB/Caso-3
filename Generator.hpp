@@ -2,18 +2,25 @@
 //#include "main.hpp"
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
-
+void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth );
 
 class Generator: public Observer {
 private:
-    Observer* observer;
+	double * heightPtr;
+	double * widthPtr;
 
 public:
-   Generator() {}
-   ~Generator() {}
-
+   Generator(double * pHeight, double * pWidth) {
+		heightPtr = pHeight;
+		widthPtr = pWidth;
+	}
 	void update(void * pPointer){
+		vector<Figure> figures = *(vector<Figure>*)pPointer;
+		double width = *widthPtr;
+      double height = *widthPtr;
+		cout<<"HOLA GEN : "<<figures.size()<<endl;
 		
+		makeGeneration(figures, width, height);
 	}
 };
 
@@ -79,7 +86,7 @@ bool compareFrame(Figure pFigure, double pHeight, double pWidth){
 }
 
 //Falta comparar si el frame se sobrepasa
-void makeGeneration(vector<Figure> pVector,double pHeight,double pWidth ){
+void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth ){
 	string result, nameSVG, stroke_w, colorFigure, oldNameSVG, fill;
 	nameSVG = "sample"+to_string(controlFrame)+".svg";
 	oldNameSVG = SVG_NAME; 

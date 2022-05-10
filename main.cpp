@@ -32,7 +32,7 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    double * heightPtr = &height;
    double * widthPtr = &width;
 
-   Generator * generator = new Generator();
+   Generator * generator = new Generator(heightPtr, widthPtr);
    Router * router = new Router(&newPathVector, pRadians, pFramesAmount, heightPtr, widthPtr);
    Selector * selector = new Selector(&pathVector, &newPathVector, pPoints);
    SvgReader * reader = new SvgReader(redBools, greenBools, blueBools);
