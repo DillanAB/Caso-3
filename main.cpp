@@ -1,8 +1,6 @@
 #include "main.hpp"
-//#include "Generator.hpp"
  
 string value;
-
 
 void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, float pRadians, int pFramesAmount){
 
@@ -46,25 +44,14 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    pathVector = reader->getPath();
    *heightPtr = reader->getHeight();
    *widthPtr = reader->getWidth();
-   //cout<<*widthPtr<<endl;
+
    reader->notify(0);
-
-
-   //cout << "#Paths: " << pathVector.size() << "| SvgReader Notifica" << endl;
-   //cout << "Tam de newVec: " << newPathVector.size() << endl;
-   //selector->notify();
-
-   //cout<<"Luego del enrutamiento: "<<frameOrder.frames[0].size()<<endl;
-
-   //for(int i = 0; i < frameOrder.frames.size(); i++){
-     //makeGeneration(frameOrder.frames[i]);
-   //}
 }
 
 
 int main(){
    vector<string> colors = {"#FFA367", "#57ABE7", "#5CADCE"};
-   vector<vector<float>> points = {{350.25, 527}, {150.25, 600}, {1706.491,831.903}};
+   vector<vector<float>> points = {{350.25, 527}, {150.25, 600}, {325.25, 527}};
    makeSvgAnimation(points, colors, 45, 3);
 
    return 0;
