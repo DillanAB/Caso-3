@@ -126,12 +126,14 @@ public:
 class Selector: public Subject, public Observer{
 private:
    vector<SvgPath*> * paths;
-   vector<NewPath> * newPaths;
+   //vector<NewPath> * newPaths;
+   PathPoint * pathPoint;
    vector<vector<float>> searchedPoints;
 public: 
-   Selector(vector<SvgPath*> * pPaths, vector<NewPath> * pNewPaths, vector<vector<float>> pPoints){
+   Selector(vector<SvgPath*> * pPaths, PathPoint * pPathPoint, vector<vector<float>> pPoints){
       paths = pPaths;
-      newPaths = pNewPaths;
+      //newPaths = pNewPaths;
+      pathPoint = pPathPoint;
       searchedPoints = pPoints;
    }
 
@@ -141,26 +143,34 @@ public:
 
    void tryPathsForPoint(float pXPoint, float pYPoint){
       for (unsigned int pathIndex = 0; pathIndex < paths->size(); pathIndex++){
-         selectFromPath(paths->at(pathIndex), pXPoint, pYPoint, newPaths);
+         selectFromPath(paths->at(pathIndex), pXPoint, pYPoint);
       }
    }
 
    //Recorre un Path y agrega nuevos path si hay instruciones que coincidan con el punto.
-   void selectFromPath(SvgPath * pPath, float pXPoint, float pYPoint, vector<NewPath> * pNewPathVector){
+   void selectFromPath(SvgPath * pPath, float pXPoint, float pYPoint){
       vector<PathInstruction*> pathInstructions = pPath->getInstructions();
       vector<PathInstruction*> resultInstructions;
+      pathPoint->setXYInitial(pXPoint, pYPoint);
+      string figureName;
+      Figure figure;
       for(unsigned int vectorIndex = 0; vectorIndex<pathInstructions.size(); vectorIndex++){
          PathInstruction * instPtr = pathInstructions[vectorIndex];
          //Poda
          if(instPtr->isInRange(pXPoint, pYPoint)){
-            instPtr->adjustSize(pXPoint,pYPoint);
-            resultInstructions.push_back(instPtr);
+            //Crear el point path
+            figureName = instPtr->getNameName();
+            figure.type = figureName;
+            figure.color = pPath->getColor();
+            pathPoint->setVectorFiguras(figure);
+            //instPtr->adjustSize(pXPoint,pYPoint);
+            //resultInstructions.push_back(instPtr);
          }
       }
-      if (resultInstructions.size()>0){
-         NewPath newPath(resultInstructions, pPath, pXPoint, pYPoint);
-            pNewPathVector->push_back(newPath);
-      }
+      //if (resultInstructions.size()>0){
+         //NewPath newPath(resultInstructions, pPath, pXPoint, pYPoint);
+            //pNewPathVector->push_back(newPath);
+      //}
    }
 
    /*void update(void * pPointer){
@@ -183,6 +193,7 @@ public:
          tryPathsForPoint(point[0], point[1]);
          bool last = searchedPoints.empty();
          notify(&last);
+         //pathPoint->cleanFiguras();
       }
    }
 
@@ -192,15 +203,15 @@ public:
 
 class Router: public Subject, public Observer{
 private:
-   vector<NewPath> * newPaths;
    double * heightPtr;
    double * widthPtr;
    double angle;
    int framesAmount;
+   PathPoint * pathPoint;
 public:
 
-   Router(vector<NewPath> * pNewPaths, double pAngle, int pFrames, double * pHeight, double * pWidth){
-      newPaths = pNewPaths;
+   Router(PathPoint * pPathPoint, double pAngle, int pFrames, double * pHeight, double * pWidth){
+      pathPoint = pPathPoint;
       heightPtr = pHeight;
       widthPtr = pWidth;
       angle = pAngle;
@@ -236,39 +247,24 @@ public:
    void update(void * pPointer){
       double width = *widthPtr;
       double height = *widthPtr;
-      PathPoint p;
-      string figureName;
-      Figure f;
-      int newSize = newPaths->size();
       //cout<<"NEWSIZE: "<<newSize<<endl;
-      for (int i = 0; i < newSize;  i++){
-         //newPaths[i].printAttributes();
-         p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getYIntersected());
-         //cout<<"X: "<<p.getXInicial()<<" Y: "<<p.getYInicial()<<endl;
-         for(int j = 0; j < newPaths->at(i).getInstructions().size(); j++){
-            figureName = newPaths->at(i).getInstructions()[j]->getNameName();
-            f.type = figureName;
-            f.color = newPaths->at(i).getColor();
-            p.setVectorFiguras(f);
-         }
-      }
-      if(newSize>0)
-         routingFunction(&p, height, width, angle, framesAmount);
-         sortingFrames(p.getVectorVector());
+
+      //if(pathPoint->getVectorFiguras()>0)
+         routingFunction(pathPoint, height, width, angle, framesAmount);
+         sortingFrames(pathPoint->getVectorVector());
       
       //cout<<"Cantidad de figuras: "<<p.getVectorVector().size()<<endl;
-      cleanPoint(&p);
+      cleanPoint(pathPoint);
       bool last = *(bool*)pPointer;
       if(last){
          //cout<<"Cantidad de frameOrder: "<<frameOrder.frames.size()<<endl;
-         finalSorting(p.getVectorVector());
+         finalSorting(pathPoint->getVectorVector());
          for(int i = 0; i < frameOrder.frames.size();i++){
             vector<Figure> figures = frameOrder.frames[i];
             notify(&figures);
          }
          frameOrder.frames.clear();
       }
-      newPaths->clear();
    }
 
    void detach(){}

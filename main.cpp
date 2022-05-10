@@ -26,15 +26,15 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
       blueBools[blueInt / NEAR_COLOR] = true;
    }
    vector<SvgPath *> pathVector;
-   vector<NewPath> newPathVector;
+   PathPoint pathPoint;
 
    double height, width;
    double * heightPtr = &height;
    double * widthPtr = &width;
 
    Generator * generator = new Generator(heightPtr, widthPtr);
-   Router * router = new Router(&newPathVector, pRadians, pFramesAmount, heightPtr, widthPtr);
-   Selector * selector = new Selector(&pathVector, &newPathVector, pPoints);
+   Router * router = new Router(&pathPoint, pRadians, pFramesAmount, heightPtr, widthPtr);
+   Selector * selector = new Selector(&pathVector, &pathPoint, pPoints);
    SvgReader * reader = new SvgReader(redBools, greenBools, blueBools);
 
    reader->attach(selector);
@@ -66,7 +66,7 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
 
 int main(){
    vector<string> colors = {"#FFA367", "#57ABE7", "#5CADCE"};
-   vector<vector<float>> points = {{350.25, 527}, {150.25, 600},{325.25, 527}};
+   vector<vector<float>> points = {{350.25, 527}, {150.25, 600}, {325.25, 527}};
    makeSvgAnimation(points, colors, 45, 3);
 
    return 0;
