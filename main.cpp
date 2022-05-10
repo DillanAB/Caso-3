@@ -5,17 +5,18 @@
 //#include "Generator.hpp"
 
 string value;
-double height, width;
 
-int main(){
-   vector<string> colors = {"#FFA367", "#57ABE7", "#5CADCE"};
+
+void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, float pRadians, int pFramesAmount){
+
    int boolSize = (255 / NEAR_COLOR) + 2;
 
    bool redBools[boolSize] = {false};
    bool greenBools[boolSize] = {false};
    bool blueBools[boolSize] = {false};
-   for (unsigned int colorIndex = 0; colorIndex < colors.size(); colorIndex++){
-      string color = colors[colorIndex];
+   for (unsigned int colorIndex = 0; colorIndex < pColors.size(); colorIndex++){
+      string color = pColors[colorIndex];
+
       string redStr = color.substr(1, 2);
       string greenStr = color.substr(3, 2);
       string blueStr = color.substr(5, 2);
@@ -27,43 +28,45 @@ int main(){
       int blueInt = stoi(blueStr, 0, 16);
       blueBools[blueInt / NEAR_COLOR] = true;
    }
-
    vector<SvgPath *> pathVector;
    vector<NewPath> newPathVector;
 
-   vector<vector<float>> points = {{34, 567}, {350.25, 527}};
-   Selector * selector = new Selector(&pathVector, &newPathVector, points);
+   double height, width;
+   double * heightPtr = &height;
+   double * widthPtr = &width;
 
-   SvgReader *reader = new SvgReader(redBools, greenBools, blueBools);
+   Router * router = new Router(&newPathVector, pRadians, pFramesAmount, heightPtr, widthPtr);
+   Selector * selector = new Selector(&pathVector, &newPathVector, pPoints);
+   SvgReader * reader = new SvgReader(redBools, greenBools, blueBools);
+
    reader->attach(selector);
+   selector->attach(router);
+
    char svgName[] = SVG_NAME;
    reader->loadSvg(svgName);
    pathVector = reader->getPath();
+   *heightPtr = reader->getHeight();
+   *widthPtr = reader->getWidth();
+
+   cout<<*widthPtr<<endl;
    reader->notify();
    cout << "#Paths: " << pathVector.size() << "| SvgReader Notifica" << endl;
    cout << "Tam de newVec: " << newPathVector.size() << endl;
+   selector->notify();
 
-   /*
-   string figureName;
-   Figure f;
-   for (int i = 0; i < newPathVector.size();  i++){
-     newPathVector[i].printAttributes();
-     p.setXYInitial(newPathVector[i].getXIntersection(), newPathVector[i].getYIntersected());
-     for(int j = 0; j < newPathVector[i].getInstructions().size(); j++){
-       figureName = newPathVector[i].getInstructions()[j]->getNameName();
-       f.type = figureName;
-       f.strokeWidth = newPathVector[i].getWidth();
-       f.color = newPathVector[i].getColor();
-       p.setVectorFiguras(f);
-     }
+   cout<<"Luego del enrutamiento: "<<frameOrder.frames[0].size()<<endl;
 
-   }
+   //for(int i = 0; i < frameOrder.frames.size(); i++){
+     //makeGeneration(frameOrder.frames[i]);
+   //}
 
-   routingFunction(&p, width,height, 360, 3);
-   cout<<"Luego del enrutamienro: "<<frameOrder.frames[0].size()<<endl;
+}
 
-   for(int i = 0; i < frameOrder.frames.size(); i++){
-     makeGeneration(frameOrder.frames[i]);
-   }*/
+
+int main(){
+   vector<string> colors = {"#FFA367", "#57ABE7", "#5CADCE"};
+   vector<vector<float>> points = {{34, 567}, {350.25, 527}};
+   makeSvgAnimation(points, colors, 360, 3);
+
    return 0;
 }

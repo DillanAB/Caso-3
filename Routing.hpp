@@ -1,5 +1,4 @@
 #include "RoutingPoint.hpp"
-#include "Observer.hpp"
 //#include "main.hpp"
 #ifndef ROUTING_HEADER
 #define ROUTING_HEADER
@@ -8,18 +7,6 @@ using namespace std;
 
 double xInitialize, yInitialize, xEnd, yEnd, workPos, control, sortingControl= 0;
 int controlFrame = 1;
-
-class Router : public Subject {
-public:
-    Router() {}
-    ~Router() {}
-
-    void notify(void* dato) {
-        cout<<"Notify de enrutamiento"<<endl;
-        //observer->update(dato);
-    } 
-    PathPoint* routingFunction(PathPoint*pPathPoint , double pHight, double pWidth, double angle, int frame);
-};
 
 void assignCoordinates(PathPoint *pPathPoint, double pHight, double pWidth){
 	//vector<PathPoint> vectorPath;
@@ -220,37 +207,4 @@ void cleanPoint(PathPoint *pPathPoint){
 	pPathPoint->cleanFrames();
 	pPathPoint->cleanrouting();
 }
-
-PathPoint * routingFunction (PathPoint* pPathPoint, double pHight, double pWidth, double pAngle, int pFrame){
-	
-    double distance = 0; //Guarda el result de calcular la distance entre PathPoints
-    assignCoordinates(pPathPoint, pHight, pWidth);
-    double result, pathX1, pathY1, xFinal, yFinal, costoRuta, position;
-    double xInicial = pPathPoint->getXInicial();
-    double yInicial = pPathPoint->getYInicial();
-    int frameRes;
-    Frame classFrame;
-    Frame array[pFrame];
-    
-    for(int i = 0; i < pPathPoint->getFiguras().size(); i++)
-	{ //Recorre el vector de figuras
-        endPoint(pPathPoint, pAngle, pHight, pWidth);
-        pathX1 = xInitialize; pathY1 = yInitialize; xFinal = xEnd; yFinal = yEnd; position = workPos;
-        
-        //Calculamos la distance entre punto inicial y final
-        //Raiz ((xFinal - pathX1)² + (yFinal-pathY1)²)
-        distance = sqrt(pow(xFinal-pathX1,2) + pow(yFinal-pathY1,2)); 
-        costoRuta = distance/pFrame; //
-        createFrame(pPathPoint,pPathPoint->getFiguras()[i],pFrame,classFrame,pathX1,pathY1,pHight,pWidth, xFinal, yFinal);
-    }
-    sortingFrames(pPathPoint->getVectorVector());
-    //frameOrder.frames = pPathPoint->getVectorVector();
-    control = 0;
-    cleanPoint(pPathPoint);
-    return pPathPoint;
-}
-
-
-
-
 #endif

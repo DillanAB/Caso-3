@@ -1,4 +1,5 @@
 #include "SvgPath.hpp"
+#include "Routing.hpp"
 #include "rapidxml/rapidxml_ext.hpp" //Clases para manejo del DOM
 #include "rapidxml/rapidxml_utils.hpp" //Clase File
 #include <sstream>
@@ -44,6 +45,14 @@ public:
       redBools = pRedB;
       greenBools = pGreenB;
       blueBools = pBlueB;
+   }
+
+   double getHeight(){
+      return svgHeight;
+   }
+
+   double getWidth(){
+      return svgWidth;
    }
 
    void loadSvg(char pSvgName[]){
@@ -161,10 +170,76 @@ public:
          vector<float> point = searchedPoints.back();
          searchedPoints.pop_back();
          tryPathsForPoint(point[0], point[1]);
-         notify();
+         //notify();
       }
    }
 
    void detach(){}
 
+};
+
+class Router: public Subject, public Observer{
+private:
+   vector<NewPath> * newPaths;
+   double * heightPtr;
+   double * widthPtr;
+   double angle;
+   int framesAmount;
+public:
+   Router(vector<NewPath> * pNewPaths, double pAngle, int pFrames, double * pHeight, double * pWidth){
+      newPaths = pNewPaths;
+      heightPtr = pHeight;
+      widthPtr = pWidth;
+      angle = pAngle;
+      framesAmount = pFrames;
+   }
+
+   PathPoint* routingFunction(PathPoint*pPathPoint , double pHight, double pWidth, double pAngle, int pFrame){
+      double distance = 0; //Guarda el result de calcular la distance entre PathPoints
+      assignCoordinates(pPathPoint, pHight, pWidth);
+      double result, pathX1, pathY1, xFinal, yFinal, costoRuta, position;
+      double xInicial = pPathPoint->getXInicial();
+      double yInicial = pPathPoint->getYInicial();
+      int frameRes;
+      Frame classFrame;
+      Frame array[pFrame];
+         
+      for(int i = 0; i < pPathPoint->getFiguras().size(); i++)
+      { //Recorre el vector de figuras
+         endPoint(pPathPoint, pAngle, pHight, pWidth);
+         pathX1 = xInitialize; pathY1 = yInitialize; xFinal = xEnd; yFinal = yEnd; position = workPos;
+            
+         //Calculamos la distance entre punto inicial y final
+         //Raiz ((xFinal - pathX1)² + (yFinal-pathY1)²)
+         distance = sqrt(pow(xFinal-pathX1,2) + pow(yFinal-pathY1,2)); 
+         costoRuta = distance/pFrame; //
+         createFrame(pPathPoint,pPathPoint->getFiguras()[i],pFrame,classFrame,pathX1,pathY1,pHight,pWidth, xFinal, yFinal);
+      }
+      sortingFrames(pPathPoint->getVectorVector());
+      //frameOrder.frames = pPathPoint->getVectorVector();
+      control = 0;
+      cleanPoint(pPathPoint);
+      return pPathPoint;
+   }
+
+   void update(){
+      double width = *widthPtr;
+      double height = *widthPtr;
+      PathPoint p;
+      string figureName;
+      Figure f;
+      for (int i = 0; i < newPaths->size();  i++){
+         //newPaths[i].printAttributes();
+         p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getXIntersection());
+         for(int j = 0; j < newPaths->at(i).getInstructions().size(); j++){
+            figureName = newPaths->at(i).getInstructions()[j]->getNameName();
+            f.type = figureName;
+            f.color = newPaths->at(i).getColor();
+            p.setVectorFiguras(f);
+         }
+      }
+      routingFunction(&p, height, width, angle, framesAmount);
+   }
+
+   void detach(){}
 };
