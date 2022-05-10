@@ -1,8 +1,6 @@
 #include "main.hpp"
-//#include "Generator.hpp"
  
 string value;
-
 
 void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, float pRadians, int pFramesAmount){
 
@@ -26,15 +24,15 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
       blueBools[blueInt / NEAR_COLOR] = true;
    }
    vector<SvgPath *> pathVector;
-   vector<NewPath> newPathVector;
+   PathPoint pathPoint;
 
    double height, width;
    double * heightPtr = &height;
    double * widthPtr = &width;
 
    Generator * generator = new Generator(heightPtr, widthPtr);
-   Router * router = new Router(&newPathVector, pRadians, pFramesAmount, heightPtr, widthPtr);
-   Selector * selector = new Selector(&pathVector, &newPathVector, pPoints);
+   Router * router = new Router(&pathPoint, pRadians, pFramesAmount, heightPtr, widthPtr);
+   Selector * selector = new Selector(&pathVector, &pathPoint, pPoints);
    SvgReader * reader = new SvgReader(redBools, greenBools, blueBools);
 
    reader->attach(selector);
@@ -47,24 +45,13 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    *heightPtr = reader->getHeight();
    *widthPtr = reader->getWidth();
 
-   cout<<*widthPtr<<endl;
    reader->notify(0);
-   cout << "#Paths: " << pathVector.size() << "| SvgReader Notifica" << endl;
-   cout << "Tam de newVec: " << newPathVector.size() << endl;
-   //selector->notify();
-
-   //cout<<"Luego del enrutamiento: "<<frameOrder.frames[0].size()<<endl;
-
-   //for(int i = 0; i < frameOrder.frames.size(); i++){
-     //makeGeneration(frameOrder.frames[i]);
-   //}
-
 }
 
 
 int main(){
    vector<string> colors = {"#FFA367", "#57ABE7", "#5CADCE"};
-   vector<vector<float>> points = {{350.25, 527}, {150.25, 600},{325.25, 527}};
+   vector<vector<float>> points = {{350.25, 527}, {150.25, 600}, {325.25, 527}};
    makeSvgAnimation(points, colors, 45, 3);
 
    return 0;

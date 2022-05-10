@@ -1,4 +1,5 @@
-//#include <vector>
+#include <vector>
+#include <iostream>
 //#include <array>
 #ifndef ROUTINGPOINT_HEADER
 #define ROUTINGPOINT_HEADER
@@ -27,7 +28,7 @@ class PathPoint {
 	    double xySecond[2]{0,0};
 	    double xyThird[2]{0,0};
 	    double xyFourth[2]{0,0};
-	    double xyEnd[2]{0,0}; //Hasta donde debería llegar la imagen
+	    double xyEnd[2]{0,0};
 	    Frame array[100];
 	    double xIncrease, yIncrease = 0;
 	    vector<Figure> figuras;
