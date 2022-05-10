@@ -13,7 +13,6 @@ struct Figure{
 
 struct Ordering{
    vector<vector<Figure>> frames;
-
 }frameOrder;
 
 struct Frame{

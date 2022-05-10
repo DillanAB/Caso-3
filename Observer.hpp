@@ -1,10 +1,10 @@
+#include "Macros.hpp"
 #include "SvgPath.hpp"
 #include "Routing.hpp"
 #include "rapidxml/rapidxml_ext.hpp" //Clases para manejo del DOM
 #include "rapidxml/rapidxml_utils.hpp" //Clase File
 #include <sstream>
 #include <fstream>
-#define NEAR_COLOR 20
 using namespace rapidxml; //Namespace de la librería
 using namespace std;
 
@@ -13,7 +13,7 @@ void extractNodeData(xml_node<>* node);
 
 class Observer{
 public:
-   virtual void update() = 0;
+   virtual void update(void* pPointer) = 0;
 };
 
 class Subject{
@@ -21,9 +21,9 @@ protected:
    vector<Observer*> observersVector;
 
 public:
-   virtual void notify(){
+   virtual void notify(void* pPointer){
       for (unsigned int observerIndex = 0; observerIndex < observersVector.size(); observerIndex++){
-         observersVector[observerIndex]->update();
+         observersVector[observerIndex]->update(pPointer);
       }
    }
    virtual void attach(Observer * pObs){
@@ -138,8 +138,6 @@ public:
       paths = pPaths;
    }
 
-
-
    void tryPathsForPoint(float pXPoint, float pYPoint){
       for (unsigned int pathIndex = 0; pathIndex < paths->size(); pathIndex++){
          selectFromPath(paths->at(pathIndex), pXPoint, pYPoint, newPaths);
@@ -164,15 +162,27 @@ public:
       }
    }
 
+   void update(void * pPointer){
+      unsigned int pathsAmount = paths->size();
+      while(searchedPoints.empty()==false){
+         vector<float> point = searchedPoints.back();
+         searchedPoints.pop_back(); //Saca el punto de la lista
+         for (unsigned int pathIndex = 0; pathIndex < pathsAmount; pathIndex++){
+            selectFromPath(paths->at(pathIndex), point[0], point[1], newPaths);
+            bool last = (searchedPoints.empty() && pathIndex == (pathsAmount-1));
+            notify(&last);
+         }
+      }
+   }
 
-   void update(){
+   /*void update(){
       while(searchedPoints.empty()==false){
          vector<float> point = searchedPoints.back();
          searchedPoints.pop_back();
          tryPathsForPoint(point[0], point[1]);
-         //notify();
       }
-   }
+      //notify();
+   }*/
 
    void detach(){}
 
@@ -222,23 +232,30 @@ public:
       return pPathPoint;
    }
 
-   void update(){
+   void update(void* pPointer){
       double width = *widthPtr;
       double height = *widthPtr;
       PathPoint p;
       string figureName;
       Figure f;
-      for (int i = 0; i < newPaths->size();  i++){
-         //newPaths[i].printAttributes();
-         p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getXIntersection());
-         for(int j = 0; j < newPaths->at(i).getInstructions().size(); j++){
-            figureName = newPaths->at(i).getInstructions()[j]->getNameName();
-            f.type = figureName;
-            f.color = newPaths->at(i).getColor();
-            p.setVectorFiguras(f);
-         }
+      NewPath newPath = newPaths->front();
+      newPaths->clear();
+      //newPaths[i].printAttributes();
+      p.setXYInitial(newPath.getXIntersection(), newPath.getXIntersection());
+      for(int j = 0; j < newPath.getInstructions().size(); j++){
+         figureName = newPath.getInstructions()[j]->getNameName();
+         f.type = figureName;
+         f.color = newPath.getColor();
+         p.setVectorFiguras(f);
       }
+      
       routingFunction(&p, height, width, angle, framesAmount);
+      sortingFrames(p.getVectorVector());
+      bool last = *(bool*)pPointer;
+      if(last){
+         finalSorting(p.getVectorVector());
+         //notify(0) LLama a generación.
+      }
    }
 
    void detach(){}

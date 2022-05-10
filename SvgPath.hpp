@@ -1,7 +1,7 @@
+#include "Macros.hpp"
 #include <iostream>
 #include <vector>
 #include "PathInstruction.hpp"
-#define COLOR_FORMAT string
 
 
 class SvgPath{

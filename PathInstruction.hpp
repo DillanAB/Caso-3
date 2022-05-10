@@ -1,12 +1,8 @@
+#include "Macros.hpp"
 #include <iostream>
 #include <cmath>
 #include <vector>
 #include <array>
-#define Y_SIZE 1000
-#define X_SIZE 1000
-#define NEAR_SIZE 10
-#define DECREASING 0
-#define INCREASING 1
 
 using namespace std;
 
