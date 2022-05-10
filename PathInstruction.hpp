@@ -19,12 +19,17 @@ protected:
     float finalX;
     float initialY;
     float finalY;
+    string name_;
 public:
     //PathInstruction();
     virtual bool isInRange(float pXPosition, float pYPosition) = 0;
     virtual void adjustSize(float pXPosition, float pYPosition) = 0;
     virtual void convertToAbs() = 0;
     virtual string convertToString() = 0;
+
+    string getNameName(){
+    	return name_;
+	}
     void printValues(){
         cout<<"Ix: "<<initialX<<"Iy: "<<initialY<<endl;
     }
@@ -70,12 +75,14 @@ class HorizontalLine: public PathInstruction{
 public:
   HorizontalLine(float pFinalX){
     finalX = pFinalX;
+    name_ = "H";
   }
   HorizontalLine(float pInitialX, float pFinalX, float pYPosition, string pColor){
     color    = pColor;
     initialX = pInitialX;
     finalX   = pFinalX;
     initialY = finalY = pYPosition;
+    name_ = "H";
   }
 
   bool isInRange(float pXPosition, float pYPosition){
@@ -84,37 +91,39 @@ public:
     return (inXRange&&inYRange);
   }
 
-  void adjustSize(float pXPosition, float pYPosition){
-    float minX  = pXPosition-NEAR_SIZE;
-    float maxX  = pXPosition+NEAR_SIZE;
+   void adjustSize(float pXPosition, float pYPosition){
+      float minX  = pXPosition-NEAR_SIZE;
+      float maxX  = pXPosition+NEAR_SIZE;
 
-    initialX = (initialX < minX)  ? minX:initialX;
-    finalX = (finalX > maxX) ? maxX:finalX;
-    return;
-  }
+      initialX = (initialX < minX)  ? minX:initialX;
+      finalX = (finalX > maxX) ? maxX:finalX;
+      return;
+   }
 
-  void convertToAbs(){
-    finalY = initialY;
-    finalX += initialX;
-  }
+   void convertToAbs(){
+      finalY = initialY;
+      finalX += initialX;
+   }
 
-    string convertToString(){
+   string convertToString(){
       string strInstruction = "H ";
       strInstruction += to_string(finalX) + " ";
       return strInstruction;
-    }
+   }
 };
 
 class VerticalLine: public PathInstruction{
 public:
     VerticalLine(float pFinalY){
         finalY = pFinalY;
+        name_ = "V";
     }
     VerticalLine(float pInitialY, float pFinalY, float pXPosition, string pColor){
         color    = pColor;
         initialY = pInitialY;
         finalY   = pFinalY;
         initialX = finalX = pXPosition;
+        name_ = "V";
     }
 
     bool isInRange(float pXPosition, float pYPosition){
@@ -151,6 +160,7 @@ public:
         finalX = pFinalX;
         finalY = pFinalY;
         type = (initialY<finalY) ? INCREASING:DECREASING;
+        name_ = "L";
     }
     Line(float pInitialX, float pFinalX, float pFirstY, float pFinalY){
         initialX = pInitialX;
@@ -158,6 +168,7 @@ public:
         initialY = pFirstY;
         finalY   = pFinalY;
         type = (initialY<finalY) ? INCREASING:DECREASING;
+        name_ = "L";
     }
     bool isInRange(float pXPosition, float pYPosition){
         bool inXRange, inYRange;
@@ -217,6 +228,7 @@ public:
         xControlPoint1 = pXPoint1;
         yControlPoint1 = pYPoint1;
         doubleCtrPoint = false;
+        name_ = "Q";
     }
 
     QuadraticCurve(float pFinalX, float pFinalY, float pXPoint1, float pYPoint1, float pXPoint2, float pYPoint2){
@@ -227,6 +239,7 @@ public:
         xControlPoint2 = pXPoint2;
         yControlPoint2 = pYPoint2;
         doubleCtrPoint = true;
+        name_ = "Q";
     }
 
     bool isInRange(float pXPosition, float pYPosition){
@@ -297,6 +310,7 @@ public:
         xControlPoint1 = pXPoint1;
         yControlPoint1 = pYPoint1;
         doubleCtrPoint = false;
+        name_ = "T";
     }
 
     SmoothQuadratic(float pFinalX, float pFinalY, float pXPoint1, float pYPoint1, float pXPoint2, float pYPoint2){
@@ -307,6 +321,7 @@ public:
         xControlPoint2 = pXPoint2;
         yControlPoint2 = pYPoint2;
         doubleCtrPoint = true;
+        name_ = "T";
     }
 
     bool isInRange(float pXPosition, float pYPosition){
@@ -367,6 +382,7 @@ public:
   Movement(float pFinalX, float pFinalY){
     finalX = pFinalX;
     finalY = pFinalY;
+    name_ = "M";
   }
 
   bool isInRange(float pXPosition, float pYPosition){
@@ -402,6 +418,7 @@ public:
         finalY = pFinalY;
         xControlPoint1 = pXPoint1;
         yControlPoint1 = pYPoint1;
+        name_ = "C";
     }
      Curveto(float pFinalX, float pFinalY, float pXPoint1, float pYPoint1, float pXPoint2, float pYPoint2){
         finalX = pFinalX;
@@ -410,6 +427,7 @@ public:
         yControlPoint1 = pYPoint1;
         xControlPoint2 = pXPoint2;
         yControlPoint2 = pYPoint2;
+        name_ = "C";
     }
 
     void setControlPoint1(float pX, float pY){
@@ -484,6 +502,7 @@ public:
         finalY = pFinalY;
         xControlPoint1 = pXPoint1;
         yControlPoint1 = pYPoint1;
+        name_ = "T";
     }
     smoothCurveto(float pFinalX, float pFinalY, float pXPoint1, float pYPoint1, float pXPoint2, float pYPoint2){
         finalX = pFinalX;
@@ -492,6 +511,7 @@ public:
         yControlPoint1 = pYPoint1;
         xControlPoint2 = pXPoint2;
         yControlPoint2 = pYPoint2;
+        name_ = "T";
     }
 
     void setControlPoint1(float pX, float pY){

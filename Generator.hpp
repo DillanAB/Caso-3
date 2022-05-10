@@ -1,4 +1,3 @@
-#include "ObserverPattern.hpp"
 #include "main.hpp"
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
@@ -16,10 +15,10 @@ public:
         observer = est;
     }
 
-    void notify(void* dato) {
+    /*void notify(void* dato) {
         cout<<"Notify de Generador"<<endl;
         observer->update(dato);
-    }
+    }*/
 };
 
 //Falta comparar si el frame se sobrepasa
@@ -30,7 +29,7 @@ void makeGeneration(vector<Figure> pVector){
 	
 	//Escribir un nuevo archivo
     file<> file(SVG_NAME); // Lee y carga el archivo en memoria
-    xml_document<> myDoc; //Raíz del árbol DOM
+    xml_document<> myDoc; //Raï¿½z del ï¿½rbol DOM
    	myDoc.parse<0>(file.data()); //Parsea el XML en un DOM    
 
 	for(int i = 0; i < pVector.size(); i++){
@@ -58,7 +57,7 @@ void makeGeneration(vector<Figure> pVector){
 	controlFrame ++;
 	ofstream copyFile(nameSVG); //Nuevo archivo
 	stringstream ss;
-	ss << *myDoc.first_node(); //Pasa el nodo raíz a ss
+	ss << *myDoc.first_node(); //Pasa el nodo raï¿½z a ss
 	string stringXML = ss.str(); //ss.toString
 	copyFile << stringXML;
 	copyFile.close(); //Escribe y cierra

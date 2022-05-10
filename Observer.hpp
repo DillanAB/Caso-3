@@ -30,7 +30,6 @@ public:
    }
 
    virtual void detach() = 0;
-
 };
 
 class SvgReader: public Subject{
@@ -39,6 +38,7 @@ private:
    bool * redBools;
    bool * greenBools;
    bool * blueBools;
+   double svgWidth, svgHeight;
 public:
    SvgReader(bool pRedB[], bool pGreenB[], bool pBlueB[]){
       redBools = pRedB;
@@ -50,10 +50,25 @@ public:
       file<> file(pSvgName); // Lee y carga el archivo en memoria
       xml_document<> svgDoc; //Raíz del árbol DOM
       svgDoc.parse<0>(file.data()); //Parsea el XML en un DOM
+      extractSize(&svgDoc); //Gets svgWidth, svgHeight.
 	   xml_node<>* pathNode = svgDoc.first_node();
 	   vector<SvgPath*> svgPathVector;
 	   extractSvgPaths(pathNode, &svgPathVector);
       svgPath = svgPathVector;
+   }
+   //Recorre el elemento raíz del documento
+   void extractSize(xml_document<>* doc){
+   xml_node<>* node = doc->first_node();
+      for (xml_attribute<>* attrib = node->first_attribute(); attrib != NULL; attrib = attrib->next_attribute()){
+         string atribute = attrib->name();
+         string val = attrib->value();
+         if(atribute == "height"){
+            svgHeight = stod(val);
+         }
+         else if(atribute == "width"){
+            svgWidth = stod(val);
+         }
+      }
    }
 
    vector<SvgPath*> getPath(){
@@ -68,10 +83,9 @@ public:
    void extractSvgPaths(xml_node<>* node, vector<SvgPath*> * pPathVector){
       vector<PathInstruction*> pathInstructions;
       SvgPath * pathPtr;
-      int i = 0;
+      //int i = 0;
       for (node = node->first_node("path"); node != NULL; node = node->next_sibling("path")){
-         i++;
-         cout<<"HOLI: "<<i<<endl;
+         //i++;
          if (node->type() == node_element){
             string colorAttribute = node->first_attribute("fill")->value();   //Color
             string redStr = colorAttribute.substr(1,2);
@@ -86,12 +100,12 @@ public:
                string dAttribute = node->first_attribute("d")->value();
                //string widthAttribute = node->first_attribute("stroke-width")->value();
                pathInstructions = convertStrToIns(dAttribute);
-               cout<<"ADI: "<<i<< " N_Instrucc: "<<pathInstructions.size()<< endl;
+               //cout<<"ADI: "<<i<< " N_Instrucc: "<<pathInstructions.size()<< endl;
                //float width = stof(widthAttribute);
                pathPtr = new SvgPath(pathInstructions, colorAttribute);
                assignInitialPoints(pathPtr->getInstructions());
                pPathVector->push_back(pathPtr);
-               pathPtr->printAttributes();
+               //pathPtr->printAttributes();
                //extractSvgPaths(node, pPathVector);
             }
          }
@@ -145,10 +159,9 @@ public:
    void update(){
       while(searchedPoints.empty()==false){
          vector<float> point = searchedPoints.back();
-         cout<<"TAM DE CUANDO UPDATE: "<<searchedPoints.size()<<" | ValorX: "<<point[0]<<"valor Y: "<<point[1]<<endl;
          searchedPoints.pop_back();
          tryPathsForPoint(point[0], point[1]);
-         cout<<"TAM DE CUANDO CIERRRA: "<<searchedPoints.size()<<endl;
+         notify();
       }
    }
 

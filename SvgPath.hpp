@@ -67,7 +67,6 @@ void callAbsoluteConstructor(char pInstructionType, vector<PathInstruction*> * p
     //cout<<"Ascii que entra a Abs: "<<pInstructionType<<endl;
     switch (pInstructionType){
     case 'M':
-        cout<<"Entra a M X = "<<pDirections[0]<<endl;
         pPathInstructions->push_back(new Movement(pDirections[0], pDirections[1]));
         break;
 
@@ -138,7 +137,6 @@ void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * 
     //cout<<"Ascii que entra: "<<pInstructionType<<endl;
     switch (pInstructionType){
     case 'm':
-        cout<<"Entra a m"<<endl;
         pPathInstructions->push_back(new Movement(pDirections[0], pDirections[1]));
         break;
 
@@ -211,7 +209,7 @@ vector<PathInstruction*> convertStrToIns(string pStringD){
    vector<PathInstruction*> pathInstructions;
    unsigned int strSize = pStringD.size();
    unsigned int numberBeginIndex = 0;
-   unsigned int posCounter;
+   //unsigned int posCounter;
    bool readingNumber = false;
    bool negativeNumber = false;
    char charInst = pStringD[0];
@@ -269,7 +267,6 @@ vector<PathInstruction*> convertStrToIns(string pStringD){
    }
    return pathInstructions;
 }
-
 
 //Recorre un vector de instrucciones y les asigna su punto inicial, convierte a absoluto si es necesario.
 void assignInitialPoints(std::vector<PathInstruction*> pInstructions){

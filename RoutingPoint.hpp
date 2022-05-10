@@ -2,6 +2,7 @@
 //#include <array>
 #ifndef ROUTINGPOINT_HEADER
 #define ROUTINGPOINT_HEADER
+using namespace std;
 
 struct Figure{
     string type;
@@ -11,8 +12,9 @@ struct Figure{
 };
 
 struct Ordering{
-    vector<vector<Figure>> frames;
-} frameOrder;
+   vector<vector<Figure>> frames;
+
+}frameOrder;
 
 struct Frame{
     int name;

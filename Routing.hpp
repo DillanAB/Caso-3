@@ -1,33 +1,22 @@
-#include "ObserverPattern.hpp"
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <chrono>
 #include "RoutingPoint.hpp"
-#include "ObserverPattern.hpp"
-#include "main.hpp"
-#define SVG_NAME "sample.svg"
+#include "Observer.hpp"
+//#include "main.hpp"
 #ifndef ROUTING_HEADER
 #define ROUTING_HEADER
+using namespace std;
 
 
 double xInitialize, yInitialize, xEnd, yEnd, workPos, control, sortingControl= 0;
 int controlFrame = 1;
 
-class Routing : public Subject {
-private:
-    Observer* observer;
-
+class Router : public Subject {
 public:
-    Routing() {}
-    ~Routing() {}
+    Router() {}
+    ~Router() {}
 
-    void attach(Observer* est) {
-        observer = est;
-    }
     void notify(void* dato) {
         cout<<"Notify de enrutamiento"<<endl;
-        observer->update(dato);
+        //observer->update(dato);
     } 
     PathPoint* routingFunction(PathPoint*pPathPoint , double pHight, double pWidth, double angle, int frame);
 };
