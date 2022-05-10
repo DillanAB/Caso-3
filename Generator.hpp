@@ -4,22 +4,17 @@
 #define GENERATOR_HEADER
 
 
-class Generator : public Subject {
+class Generator: public Observer {
 private:
     Observer* observer;
 
 public:
-    Generator() {}
-    ~Generator() {}
+   Generator() {}
+   ~Generator() {}
 
-    void attach(Observer* est) {
-        observer = est;
-    }
-
-    void notify(void* dato) {
-        cout<<"Notify de Generador"<<endl;
-        observer->update(dato);
-    }
+	void update(void * pPointer){
+		
+	}
 };
 
 void addAttribute(string pResult, string pColor,string pFill, string pStroke, string pNameSVG, string pOldName){		

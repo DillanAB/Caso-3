@@ -193,6 +193,7 @@ void sortingFrames(vector<vector<Figure>> pVectorFrame){
 
 //Ordena manda a Generacion los frames en orden;
 void finalSorting(vector<vector<Figure>> pVectorFrame){
+    cout<<"FINAL SORTING*********************************************"<<endl;
     for(int a = 0; a < pVectorFrame.size(); a++){
         for(int j = 0; j < pVectorFrame[a].size(); j++ ){
             frameOrder.frames[a].push_back(pVectorFrame[a][j]);

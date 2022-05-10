@@ -1,5 +1,4 @@
 #include "main.hpp"
-#include "Macros.hpp"
 //#include "Generator.hpp"
  
 string value;
@@ -33,12 +32,14 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    double * heightPtr = &height;
    double * widthPtr = &width;
 
+   Generator * generator = new Generator();
    Router * router = new Router(&newPathVector, pRadians, pFramesAmount, heightPtr, widthPtr);
    Selector * selector = new Selector(&pathVector, &newPathVector, pPoints);
    SvgReader * reader = new SvgReader(redBools, greenBools, blueBools);
 
    reader->attach(selector);
    selector->attach(router);
+   router->attach(generator);
 
    char svgName[] = SVG_NAME;
    reader->loadSvg(svgName);

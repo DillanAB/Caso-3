@@ -5,7 +5,7 @@
 #include "rapidxml/rapidxml_utils.hpp" //Clase File
 #include <sstream>
 #include <fstream>
-using namespace rapidxml; //Namespace de la librería
+using namespace rapidxml;
 using namespace std;
 
 void extractXMLData(xml_document<>* doc);
@@ -162,7 +162,7 @@ public:
       }
    }
 
-   void update(void * pPointer){
+   /*void update(void * pPointer){
       unsigned int pathsAmount = paths->size();
       while(searchedPoints.empty()==false){
          vector<float> point = searchedPoints.back();
@@ -173,16 +173,17 @@ public:
             notify(&last);
          }
       }
-   }
+   }*/
 
-   /*void update(){
+   void update(void * pPointer){
       while(searchedPoints.empty()==false){
          vector<float> point = searchedPoints.back();
          searchedPoints.pop_back();
          tryPathsForPoint(point[0], point[1]);
+         bool last = searchedPoints.empty();
+         notify(&last);
       }
-      //notify();
-   }*/
+   }
 
    void detach(){}
 
@@ -238,24 +239,25 @@ public:
       PathPoint p;
       string figureName;
       Figure f;
-      NewPath newPath = newPaths->front();
-      newPaths->clear();
-      //newPaths[i].printAttributes();
-      p.setXYInitial(newPath.getXIntersection(), newPath.getXIntersection());
-      for(int j = 0; j < newPath.getInstructions().size(); j++){
-         figureName = newPath.getInstructions()[j]->getNameName();
-         f.type = figureName;
-         f.color = newPath.getColor();
-         p.setVectorFiguras(f);
+      for (int i = 0; i < newPaths->size();  i++){
+         //newPaths[i].printAttributes();
+         p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getXIntersection());
+         for(int j = 0; j < newPaths->at(i).getInstructions().size(); j++){
+            figureName = newPaths->at(i).getInstructions()[j]->getNameName();
+            f.type = figureName;
+            f.color = newPaths->at(i).getColor();
+            p.setVectorFiguras(f);
+         }
       }
-      
-      routingFunction(&p, height, width, angle, framesAmount);
       sortingFrames(p.getVectorVector());
+      routingFunction(&p, height, width, angle, framesAmount);
       bool last = *(bool*)pPointer;
       if(last){
+         cout<<"ENTRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
          finalSorting(p.getVectorVector());
-         //notify(0) LLama a generación.
+         notify(0);
       }
+      newPaths->clear();
    }
 
    void detach(){}
