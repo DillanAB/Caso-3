@@ -203,7 +203,6 @@ void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * 
     pPathInstructions->back()->setAbsolute(false);
 }
 
-//LA QUE CAMBIÉ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 vector<PathInstruction*> convertStrToIns(string pStringD){
    vector<float> positions;
    vector<PathInstruction*> pathInstructions;

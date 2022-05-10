@@ -47,10 +47,12 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    *heightPtr = reader->getHeight();
    *widthPtr = reader->getWidth();
 
-   cout<<*widthPtr<<endl;
+   //cout<<*widthPtr<<endl;
    reader->notify(0);
-   cout << "#Paths: " << pathVector.size() << "| SvgReader Notifica" << endl;
-   cout << "Tam de newVec: " << newPathVector.size() << endl;
+
+
+   //cout << "#Paths: " << pathVector.size() << "| SvgReader Notifica" << endl;
+   //cout << "Tam de newVec: " << newPathVector.size() << endl;
    //selector->notify();
 
    //cout<<"Luego del enrutamiento: "<<frameOrder.frames[0].size()<<endl;

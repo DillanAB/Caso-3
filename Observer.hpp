@@ -233,7 +233,7 @@ public:
       return pPathPoint;
    }
 
-   void update(void* pPointer){
+   void update(void * pPointer){
       double width = *widthPtr;
       double height = *widthPtr;
       PathPoint p;
