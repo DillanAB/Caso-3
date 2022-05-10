@@ -1,36 +1,11 @@
-#include "ObserverPattern.hpp"
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <chrono>
 #include "RoutingPoint.hpp"
-#include "ObserverPattern.hpp"
-#include "main.hpp"
-#define SVG_NAME "sample.svg"
 #ifndef ROUTING_HEADER
 #define ROUTING_HEADER
+using namespace std;
 
 
 double xInitialize, yInitialize, xEnd, yEnd, workPos, control, sortingControl= 0;
 int controlFrame = 1;
-
-class Routing : public Subject {
-private:
-    Observer* observer;
-
-public:
-    Routing() {}
-    ~Routing() {}
-
-    void attach(Observer* est) {
-        observer = est;
-    }
-    void notify(void* dato) {
-        cout<<"Notify de enrutamiento"<<endl;
-        observer->update(dato);
-    } 
-    PathPoint* routingFunction(PathPoint*pPathPoint , double pHight, double pWidth, double angle, int frame);
-};
 
 void assignCoordinates(PathPoint *pPathPoint, double pHight, double pWidth){
 	//vector<PathPoint> vectorPath;
@@ -197,27 +172,23 @@ pClassFrame, double pathX1, double pathY1, double pHight, double pWidth, int xFi
 void sortingFrames(vector<vector<Figure>> pVectorFrame){
     for(int a = 0; a < pVectorFrame.size(); a++){
         for(int j = 0; j < pVectorFrame[a].size(); j++ ){
-            cout<<"Tipo de figura: "<< pVectorFrame[a][j].type<<endl;
+            //cout<<"Tipo de figura: "<< pVectorFrame[a][j].type<<endl;
             frameOrder.frames[a].push_back(pVectorFrame[a][j]);
-             if(frameOrder.frames[a][j].type == "L"){
-                 cout<<"M1 = "<<pVectorFrame[a][j].route[0]<< " "
-                 <<"M2 = "<<pVectorFrame[a][j].route[1]<< " "
-                 <<"L1 = "<<pVectorFrame[a][j].route[2]<<" "
-                 <<"L2 = "<<pVectorFrame[a][j].route[3]<<endl;
-             }
         }
     }
 	 
-    for(int i = 0; i < frameOrder.frames.size(); i++){
-        for(int b = 0; b < frameOrder.frames[i].size(); b++){
-            cout<<"Tipo de figura: "<< frameOrder.frames[i][b].type<<" Frame: "<<i<<endl;
+    // for(int i = 0; i < frameOrder.frames.size(); i++){
+    //     for(int b = 0; b < frameOrder.frames[i].size(); b++){
+    //         cout<<"Tipo de figura: "<< frameOrder.frames[i][b].type<<" Frame: "<<i<<endl;
             
-        }
-    }
+    //     }
+    // }
 }
 
 //Ordena manda a Generacion los frames en orden;
 void finalSorting(vector<vector<Figure>> pVectorFrame){
+    //cout<<"FINAL SORTING*********************************************"<<endl;
+    //cout<<"Cantidad del soting: "<<pVectorFrame.size()<<endl;
     for(int a = 0; a < pVectorFrame.size(); a++){
         for(int j = 0; j < pVectorFrame[a].size(); j++ ){
             frameOrder.frames[a].push_back(pVectorFrame[a][j]);
@@ -231,37 +202,4 @@ void cleanPoint(PathPoint *pPathPoint){
 	pPathPoint->cleanFrames();
 	pPathPoint->cleanrouting();
 }
-
-PathPoint * routingFunction (PathPoint* pPathPoint, double pHight, double pWidth, double pAngle, int pFrame){
-	
-    double distance = 0; //Guarda el result de calcular la distance entre PathPoints
-    assignCoordinates(pPathPoint, pHight, pWidth);
-    double result, pathX1, pathY1, xFinal, yFinal, costoRuta, position;
-    double xInicial = pPathPoint->getXInicial();
-    double yInicial = pPathPoint->getYInicial();
-    int frameRes;
-    Frame classFrame;
-    Frame array[pFrame];
-    
-    for(int i = 0; i < pPathPoint->getFiguras().size(); i++)
-	{ //Recorre el vector de figuras
-        endPoint(pPathPoint, pAngle, pHight, pWidth);
-        pathX1 = xInitialize; pathY1 = yInitialize; xFinal = xEnd; yFinal = yEnd; position = workPos;
-        
-        //Calculamos la distance entre punto inicial y final
-        //Raiz ((xFinal - pathX1)² + (yFinal-pathY1)²)
-        distance = sqrt(pow(xFinal-pathX1,2) + pow(yFinal-pathY1,2)); 
-        costoRuta = distance/pFrame; //
-        createFrame(pPathPoint,pPathPoint->getFiguras()[i],pFrame,classFrame,pathX1,pathY1,pHight,pWidth, xFinal, yFinal);
-    }
-    sortingFrames(pPathPoint->getVectorVector());
-    //frameOrder.frames = pPathPoint->getVectorVector();
-    control = 0;
-    cleanPoint(pPathPoint);
-    return pPathPoint;
-}
-
-
-
-
 #endif
