@@ -11,10 +11,8 @@ protected:
     bool inverted;
     bool absolute;
     string color;
-    float initialX;
-    float finalX;
-    float initialY;
-    float finalY;
+    float initialX, finalX, initialY, finalY;
+    float minX, maxX, minY, maxY;
     string name_;
 public:
     //PathInstruction();
@@ -65,6 +63,26 @@ public:
     bool isPositive(){
         return initialX<finalX;
     }
+    void setXMinMax(){
+       if(initialX<finalX){
+          minX = initialX;
+          maxX = finalX; 
+       }
+       else{
+          maxX = initialX;
+          minX = finalX;
+       }
+    }
+    void setYMinMax(){
+       if(initialY<finalY){
+          minY = initialY;
+          maxY = finalY; 
+       }
+       else{
+          maxY = initialY;
+          minY = finalY;
+       }
+    }
 };
 
 class HorizontalLine: public PathInstruction{
@@ -81,11 +99,11 @@ public:
     name_ = "H";
   }
 
-  bool isInRange(float pXPosition, float pYPosition){
-    bool inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&finalX>=(pXPosition-NEAR_SIZE));
-    bool inYRange = (initialY>(pYPosition-NEAR_SIZE)&&initialY<(pYPosition+NEAR_SIZE));
-    return (inXRange&&inYRange);
-  }
+   bool isInRange(float pXPosition, float pYPosition){
+      bool inXRange = (minX<=(pXPosition+NEAR_SIZE)&&maxX>=(pXPosition-NEAR_SIZE));
+      bool inYRange = (initialY>(pYPosition-NEAR_SIZE)&&initialY<(pYPosition+NEAR_SIZE));
+      return (inXRange&&inYRange);
+   }
 
    void adjustSize(float pXPosition, float pYPosition){
       float minX  = pXPosition-NEAR_SIZE;
@@ -123,7 +141,7 @@ public:
     }
 
     bool isInRange(float pXPosition, float pYPosition){
-        bool inYRange = (initialY<=(pYPosition+NEAR_SIZE)&&finalY>=(pYPosition-NEAR_SIZE));
+        bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
         bool inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&initialX>=(pXPosition-NEAR_SIZE));
         return (inYRange&&inXRange);
     }
@@ -169,12 +187,12 @@ public:
     bool isInRange(float pXPosition, float pYPosition){
         bool inXRange, inYRange;
         if(INCREASING){
-            inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&finalX>=(pXPosition-NEAR_SIZE));
-            inYRange = (initialY>=(pYPosition-NEAR_SIZE)&&finalY>=(pYPosition+NEAR_SIZE));
+            inXRange = (minX<=(pXPosition+NEAR_SIZE)&&maxX>=(pXPosition-NEAR_SIZE));
+            inYRange = (minY>=(pYPosition-NEAR_SIZE)&&maxY>=(pYPosition+NEAR_SIZE));
         }
         else{
-            inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&finalX>=(pXPosition-NEAR_SIZE));
-            inYRange = (initialY<=(pYPosition+NEAR_SIZE)&&finalY>=(pXPosition-NEAR_SIZE));
+            inXRange = (minX<=(pXPosition+NEAR_SIZE)&&maxX>=(pXPosition-NEAR_SIZE));
+            inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pXPosition-NEAR_SIZE));
         }
         return (inXRange&&inYRange);
     }

@@ -1,6 +1,7 @@
 #include "Macros.hpp"
 #include "SvgPath.hpp"
 #include "Routing.hpp"
+#include "RoutingPoint.hpp"
 #include "rapidxml/rapidxml_ext.hpp" //Clases para manejo del DOM
 #include "rapidxml/rapidxml_utils.hpp" //Clase File
 #include <sstream>
@@ -197,6 +198,7 @@ private:
    double angle;
    int framesAmount;
 public:
+
    Router(vector<NewPath> * pNewPaths, double pAngle, int pFrames, double * pHeight, double * pWidth){
       newPaths = pNewPaths;
       heightPtr = pHeight;
@@ -226,10 +228,8 @@ public:
          costoRuta = distance/pFrame; //
          createFrame(pPathPoint,pPathPoint->getFiguras()[i],pFrame,classFrame,pathX1,pathY1,pHight,pWidth, xFinal, yFinal);
       }
-      sortingFrames(pPathPoint->getVectorVector());
-      //frameOrder.frames = pPathPoint->getVectorVector();
       control = 0;
-      cleanPoint(pPathPoint);
+      frameOrder.frames.size();
       return pPathPoint;
    }
 
@@ -240,10 +240,11 @@ public:
       string figureName;
       Figure f;
       int newSize = newPaths->size();
-      cout<<"NEWSIZE: "<<newSize<<endl;
+      //cout<<"NEWSIZE: "<<newSize<<endl;
       for (int i = 0; i < newSize;  i++){
          //newPaths[i].printAttributes();
-         p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getXIntersection());
+         p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getYIntersected());
+         //cout<<"X: "<<p.getXInicial()<<" Y: "<<p.getYInicial()<<endl;
          for(int j = 0; j < newPaths->at(i).getInstructions().size(); j++){
             figureName = newPaths->at(i).getInstructions()[j]->getNameName();
             f.type = figureName;
@@ -253,13 +254,19 @@ public:
       }
       if(newSize>0)
          routingFunction(&p, height, width, angle, framesAmount);
-      //sortingFrames(p.getVectorVector());
+         sortingFrames(p.getVectorVector());
+      
+      //cout<<"Cantidad de figuras: "<<p.getVectorVector().size()<<endl;
+      cleanPoint(&p);
       bool last = *(bool*)pPointer;
       if(last){
+         //cout<<"Cantidad de frameOrder: "<<frameOrder.frames.size()<<endl;
          finalSorting(p.getVectorVector());
-         vector<Figure> figures = p.getFiguras();
-         cout<<"ENTRA : "<<figures.size()<<endl;
-         notify(&figures);
+         for(int i = 0; i < frameOrder.frames.size();i++){
+            vector<Figure> figures = frameOrder.frames[i];
+            notify(&figures);
+         }
+         frameOrder.frames.clear();
       }
       newPaths->clear();
    }

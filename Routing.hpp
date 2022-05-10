@@ -172,28 +172,23 @@ pClassFrame, double pathX1, double pathY1, double pHight, double pWidth, int xFi
 void sortingFrames(vector<vector<Figure>> pVectorFrame){
     for(int a = 0; a < pVectorFrame.size(); a++){
         for(int j = 0; j < pVectorFrame[a].size(); j++ ){
-            cout<<"Tipo de figura: "<< pVectorFrame[a][j].type<<endl;
+            //cout<<"Tipo de figura: "<< pVectorFrame[a][j].type<<endl;
             frameOrder.frames[a].push_back(pVectorFrame[a][j]);
-             if(frameOrder.frames[a][j].type == "L"){
-                 cout<<"M1 = "<<pVectorFrame[a][j].route[0]<< " "
-                 <<"M2 = "<<pVectorFrame[a][j].route[1]<< " "
-                 <<"L1 = "<<pVectorFrame[a][j].route[2]<<" "
-                 <<"L2 = "<<pVectorFrame[a][j].route[3]<<endl;
-             }
         }
     }
 	 
-    for(int i = 0; i < frameOrder.frames.size(); i++){
-        for(int b = 0; b < frameOrder.frames[i].size(); b++){
-            cout<<"Tipo de figura: "<< frameOrder.frames[i][b].type<<" Frame: "<<i<<endl;
+    // for(int i = 0; i < frameOrder.frames.size(); i++){
+    //     for(int b = 0; b < frameOrder.frames[i].size(); b++){
+    //         cout<<"Tipo de figura: "<< frameOrder.frames[i][b].type<<" Frame: "<<i<<endl;
             
-        }
-    }
+    //     }
+    // }
 }
 
 //Ordena manda a Generacion los frames en orden;
 void finalSorting(vector<vector<Figure>> pVectorFrame){
-    cout<<"FINAL SORTING*********************************************"<<endl;
+    //cout<<"FINAL SORTING*********************************************"<<endl;
+    //cout<<"Cantidad del soting: "<<pVectorFrame.size()<<endl;
     for(int a = 0; a < pVectorFrame.size(); a++){
         for(int j = 0; j < pVectorFrame[a].size(); j++ ){
             frameOrder.frames[a].push_back(pVectorFrame[a][j]);

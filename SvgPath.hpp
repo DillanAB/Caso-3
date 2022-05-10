@@ -289,5 +289,7 @@ void assignInitialPoints(std::vector<PathInstruction*> pInstructions){
             //if (pInstructions[instIndex]->isPositive()==false)
                 //pInstructions[instIndex]->invertInitFinalPoint();
         }
+        pInstructions[instIndex]->setXMinMax();
+        pInstructions[instIndex]->setYMinMax();
 	}
 }

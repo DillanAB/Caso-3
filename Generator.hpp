@@ -18,8 +18,7 @@ public:
 		vector<Figure> figures = *(vector<Figure>*)pPointer;
 		double width = *widthPtr;
       double height = *widthPtr;
-		cout<<"HOLA GEN : "<<figures.size()<<endl;
-		
+		//cout<<"HOLA GEN : "<<figures.size()<<endl;		
 		makeGeneration(figures, width, height);
 	}
 };
@@ -89,33 +88,30 @@ bool compareFrame(Figure pFigure, double pHeight, double pWidth){
 void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth ){
 	string result, nameSVG, stroke_w, colorFigure, oldNameSVG, fill;
 	nameSVG = "sample"+to_string(controlFrame)+".svg";
-	oldNameSVG = SVG_NAME; 
+	oldNameSVG = SVG_NAME;
+	stroke_w = "3";
 
 	for(int i = 0; i < pVector.size(); i++){
 		result = "M "+to_string(pVector[i].route[0]) + " "+to_string(pVector[i].route[1])+" ";
 		if(pVector[i].type == "L")
 		{		
 			result += pVector[i].type + " "+ to_string(pVector[i].route[2])+" "+to_string((pVector[i].route[3]));
-			stroke_w = to_string(pVector[i].strokeWidth);
 			fill = "none";	
 		}
 		else if (pVector[i].type == "Q")
 		{
 			result += pVector[i].type + " "+ to_string(pVector[i].route[2])+" "+to_string((pVector[i].route[3]))+" "+
 			to_string(pVector[i].route[4])+" "+ to_string(pVector[i].route[5]);
-			stroke_w = "none";
 			fill = pVector[i].color;				
 		}
 		else if (pVector[i].type == "H")
 		{
 			result += pVector[i].type + " "+ to_string(pVector[i].route[2]);
-			stroke_w = to_string(pVector[i].strokeWidth);;
 			fill = "none";				
 		}
 		else if (pVector[i].type == "V")
 		{
 			result += pVector[i].type + " "+ to_string(pVector[i].route[2]);
-			stroke_w = to_string(pVector[i].strokeWidth);;
 			fill = "none";				
 		}
 		if(!compareFrame(pVector[i], pHeight, pWidth)){					
