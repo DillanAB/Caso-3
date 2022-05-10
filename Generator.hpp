@@ -1,5 +1,6 @@
 #include "Observer.hpp"
 #include "Router.hpp"
+#include "Macros.hpp"
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
 void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth );
@@ -87,7 +88,11 @@ bool compareFrame(Figure pFigure, double pHeight, double pWidth){
 //Falta comparar si el frame se sobrepasa
 void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth ){
 	string result, nameSVG, stroke_w, colorFigure, oldNameSVG, fill;
-	nameSVG = "sample"+to_string(controlFrame)+".svg";
+	
+	string fullNameSVG = SVG_NAME;
+	nameSVG = fullNameSVG.substr(0, fullNameSVG.size()-4);
+	
+	nameSVG += to_string(controlFrame)+".svg";
 	oldNameSVG = SVG_NAME;
 	stroke_w = "3";
 
