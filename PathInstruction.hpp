@@ -4,6 +4,9 @@
 #include <vector>
 #include <array>
 
+#ifndef INSTRUCTION_HEADER
+#define INSTRUCTION_HEADER
+
 using namespace std;
 
 class PathInstruction{
@@ -587,3 +590,5 @@ public:
       return strInstruction;
     }
 };
+
+#endif

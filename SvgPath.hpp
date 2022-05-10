@@ -3,6 +3,8 @@
 #include <vector>
 #include "PathInstruction.hpp"
 
+#ifndef SVG_PATH_HEADER
+#define SVG_PATH_HEADER
 
 class SvgPath{
 protected:
@@ -292,3 +294,4 @@ void assignInitialPoints(std::vector<PathInstruction*> pInstructions){
         pInstructions[instIndex]->setYMinMax();
 	}
 }
+#endif

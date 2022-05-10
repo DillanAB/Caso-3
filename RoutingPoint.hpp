@@ -1,4 +1,5 @@
-//#include <vector>
+#include <vector>
+#include <iostream>
 //#include <array>
 #ifndef ROUTINGPOINT_HEADER
 #define ROUTINGPOINT_HEADER

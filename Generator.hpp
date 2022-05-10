@@ -1,5 +1,5 @@
 #include "Observer.hpp"
-//#include "main.hpp"
+#include "Router.hpp"
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
 void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth );
@@ -119,7 +119,7 @@ void makeGeneration(vector<Figure> pVector, double pHeight, double pWidth ){
 			oldNameSVG = nameSVG; //Se cambia con el nuevo nombre para que ingrese a ese nuevo svg en la nueva corrida	
 		}
 	}
- 	controlFrame ++;
+ 	controlFrame++;
 	control++;			
 }
 

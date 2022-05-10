@@ -46,7 +46,6 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    pathVector = reader->getPath();
    *heightPtr = reader->getHeight();
    *widthPtr = reader->getWidth();
-
    //cout<<*widthPtr<<endl;
    reader->notify(0);
 
@@ -60,7 +59,6 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    //for(int i = 0; i < frameOrder.frames.size(); i++){
      //makeGeneration(frameOrder.frames[i]);
    //}
-
 }
 
 
