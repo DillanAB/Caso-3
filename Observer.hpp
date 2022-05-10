@@ -239,7 +239,9 @@ public:
       PathPoint p;
       string figureName;
       Figure f;
-      for (int i = 0; i < newPaths->size();  i++){
+      int newSize = newPaths->size();
+      cout<<"NEWSIZE: "<<newSize<<endl;
+      for (int i = 0; i < newSize;  i++){
          //newPaths[i].printAttributes();
          p.setXYInitial(newPaths->at(i).getXIntersection(), newPaths->at(i).getXIntersection());
          for(int j = 0; j < newPaths->at(i).getInstructions().size(); j++){
@@ -249,8 +251,9 @@ public:
             p.setVectorFiguras(f);
          }
       }
-      sortingFrames(p.getVectorVector());
-      routingFunction(&p, height, width, angle, framesAmount);
+      if(newSize>0)
+         routingFunction(&p, height, width, angle, framesAmount);
+      //sortingFrames(p.getVectorVector());
       bool last = *(bool*)pPointer;
       if(last){
          cout<<"ENTRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
