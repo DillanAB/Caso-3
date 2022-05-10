@@ -1,5 +1,6 @@
 #include "Observer.hpp"
 #include "Macros.hpp"
+#include "Router.hpp"
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
 
@@ -95,7 +96,7 @@ The function is O(n), since the N of the function is only traversed once.
 */
 vector<Figure> makeGeneration(vector<Figure> pVector, double pHeight, double pWidth ){
 	string result, nameSVG, stroke_w, colorFigure, oldNameSVG, fill;
-	
+	vector<Figure> vectorResult;
 	string fullNameSVG = SVG_NAME;
 	nameSVG = fullNameSVG.substr(0, fullNameSVG.size()-4);
 	
