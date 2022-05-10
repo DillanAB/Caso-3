@@ -220,7 +220,7 @@ public:
         bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
         bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
         bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
-        return (inXRange&&(inCtr1Range||inCtr2Range));
+        return ((inXRange&&inYRange)||(inCtr1Range||inCtr2Range));
     }
 
     void setColor(string pColor){
@@ -284,7 +284,7 @@ public:
         bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
         bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
         bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
-        return (inXRange&&(inCtr1Range||inCtr2Range));
+        return ((inXRange&&inYRange)||(inCtr1Range||inCtr2Range));
     }
 
     void setColor(string pColor){
@@ -377,7 +377,7 @@ public:
         bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
         bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
         bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
-        return (inXRange&&(inCtr1Range||inCtr2Range));
+        return ((inXRange&&inYRange)||(inCtr1Range||inCtr2Range));
     }
 
     void convertToAbs(){
@@ -443,7 +443,7 @@ public:
         bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
         bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
         bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
-        return (inXRange&&(inCtr1Range||inCtr2Range));
+        return ((inXRange&&inYRange)||(inCtr1Range||inCtr2Range));
     }
     
     void convertToAbs(){
