@@ -48,7 +48,6 @@ void makeSvgAnimation(vector<vector<float>> pPoints, vector<string> pColors, flo
    reader->notify(0);
 }
 
-
 int main(){
    vector<string> colors = {"#FFA367", "#57ABE7", "#5CADCE"};
    vector<vector<float>> points = {{350.25, 527}, {150.25, 600}, {325.25, 527}};

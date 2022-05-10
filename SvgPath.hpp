@@ -44,7 +44,7 @@ public:
 
 class NewPath: public SvgPath{
 private:
-  float xIntersected;
+  float xIntersected; 
   float yIntersected;
 public: 
   NewPath(vector<PathInstruction*> pInstructions, SvgPath * pBasePath, float pXInter, float pYInter){
@@ -66,7 +66,6 @@ public:
 
 void callAbsoluteConstructor(char pInstructionType, vector<PathInstruction*> * pPathInstructions, vector<float> pDirections){
     int vecSize;
-    //cout<<"Ascii que entra a Abs: "<<pInstructionType<<endl;
     switch (pInstructionType){
     case 'M':
         pPathInstructions->push_back(new Movement(pDirections[0], pDirections[1]));
@@ -124,9 +123,6 @@ void callAbsoluteConstructor(char pInstructionType, vector<PathInstruction*> * p
         }
         break;
 
-    case 'A':
-        break;
-
     default:
     return;
         break;
@@ -136,7 +132,6 @@ void callAbsoluteConstructor(char pInstructionType, vector<PathInstruction*> * p
 
 void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * pPathInstructions, vector<float> pDirections){
     int vecSize;
-    //cout<<"Ascii que entra: "<<pInstructionType<<endl;
     switch (pInstructionType){
     case 'm':
         pPathInstructions->push_back(new Movement(pDirections[0], pDirections[1]));
@@ -193,11 +188,7 @@ void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * 
         pPathInstructions->push_back(new SmoothQuadratic(pDirections[2], pDirections[3], pDirections[0], pDirections[1]));
       }
       break; 
-
-    case 'a':
-        break;
-
-    
+  
     default:
         return;
         break;
@@ -205,12 +196,12 @@ void callRelativeConstructors(char pInstructionType, vector<PathInstruction*> * 
     pPathInstructions->back()->setAbsolute(false);
 }
 
+//Convert the string of a d attribute to a instructions vector.
 vector<PathInstruction*> convertStrToIns(string pStringD){
    vector<float> positions;
    vector<PathInstruction*> pathInstructions;
    unsigned int strSize = pStringD.size();
    unsigned int numberBeginIndex = 0;
-   //unsigned int posCounter;
    bool readingNumber = false;
    bool negativeNumber = false;
    char charInst = pStringD[0];
@@ -218,7 +209,6 @@ vector<PathInstruction*> convertStrToIns(string pStringD){
    for(unsigned int strIndex = 1; strIndex<strSize; strIndex++){
       char charString = pStringD[strIndex];
       int asciiValue = (int)charString;
-      //cout<<"INT: "<<charString<<endl;
 
       if((asciiValue>=48 && asciiValue<=57) || charString=='.'){
          if(readingNumber==false){
@@ -229,7 +219,6 @@ vector<PathInstruction*> convertStrToIns(string pStringD){
       }
       else if(charString=='-'){
          if(readingNumber){
-            //pStringD.substr(numberBeginIndex,((strIndex+1)-numberBeginIndex));
             float number = stof(strNumber);
             number = (negativeNumber) ? (number * -1):number;
             positions.push_back(number);
@@ -269,7 +258,8 @@ vector<PathInstruction*> convertStrToIns(string pStringD){
    return pathInstructions;
 }
 
-//Recorre un vector de instrucciones y les asigna su punto inicial, convierte a absoluto si es necesario.
+
+//Assigns the initial point to the instructions, if is necessary convert the positions to absolute.
 void assignInitialPoints(std::vector<PathInstruction*> pInstructions){
 	float xPosition = pInstructions[0]->getFinalX();
 	float yPosition = pInstructions[0]->getFinalY();
@@ -280,15 +270,11 @@ void assignInitialPoints(std::vector<PathInstruction*> pInstructions){
 		if (pInstructions[instIndex]->getAbsolute()){
             xPosition = pInstructions[instIndex]->getFinalX();
 		    yPosition = pInstructions[instIndex]->getFinalY();
-            //if (pInstructions[instIndex]->isPositive()==false)
-                //pInstructions[instIndex]->invertInitFinalPoint();
         }
         else{
             xPosition += pInstructions[instIndex]->getFinalX();
 		    yPosition += pInstructions[instIndex]->getFinalY();
             pInstructions[instIndex]->convertToAbs();
-            //if (pInstructions[instIndex]->isPositive()==false)
-                //pInstructions[instIndex]->invertInitFinalPoint();
         }
         pInstructions[instIndex]->setXMinMax();
         pInstructions[instIndex]->setYMinMax();

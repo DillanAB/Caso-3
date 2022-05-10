@@ -18,12 +18,13 @@ protected:
     float minX, maxX, minY, maxY;
     string name_;
 public:
-    //PathInstruction();
-    virtual bool isInRange(float pXPosition, float pYPosition) = 0;
-    //virtual void adjustSize(float pXPosition, float pYPosition) = 0;
-    virtual void convertToAbs() = 0;
-    virtual string convertToString() = 0;
-
+    virtual bool isInRange(float pXPosition, float pYPosition) = 0; //Returns if the point is near to the instruction.
+    virtual void convertToAbs() = 0;    //Converts the relative directions to absolute.
+    virtual string convertToString() = 0;   //Create a string with the positions of the instruction.
+    
+    bool isInXRange(float pXPosition){
+        return (minX<=(pXPosition+NEAR_SIZE)&&maxX>=(pXPosition-NEAR_SIZE));
+    }
     string getNameName(){
     	return name_;
 	}
@@ -37,17 +38,6 @@ public:
         initialX = pInitialX;
         initialY = pInitialY;
     }
-    void invertInitFinalPoint(){
-        inverted = true;
-        float auxValue;
-        auxValue = initialX;
-        initialX = finalX;
-        finalX = auxValue;
-        
-        auxValue = initialY;
-        initialY = finalY;
-        finalY = auxValue;
-    }   
     float getInitialX(){
         return initialX;
     }
@@ -66,6 +56,7 @@ public:
     bool isPositive(){
         return initialX<finalX;
     }
+    //Sets the min and max X point.
     void setXMinMax(){
        if(initialX<finalX){
           minX = initialX;
@@ -76,6 +67,7 @@ public:
           minX = finalX;
        }
     }
+    //Set the min and max Y point.
     void setYMinMax(){
        if(initialY<finalY){
           minY = initialY;
@@ -108,15 +100,6 @@ public:
       return (inXRange&&inYRange);
    }
 
-   void adjustSize(float pXPosition, float pYPosition){
-      float minX  = pXPosition-NEAR_SIZE;
-      float maxX  = pXPosition+NEAR_SIZE;
-
-      initialX = (initialX < minX)  ? minX:initialX;
-      finalX = (finalX > maxX) ? maxX:finalX;
-      return;
-   }
-
    void convertToAbs(){
       finalY = initialY;
       finalX += initialX;
@@ -147,15 +130,6 @@ public:
         bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
         bool inXRange = (initialX<=(pXPosition+NEAR_SIZE)&&initialX>=(pXPosition-NEAR_SIZE));
         return (inYRange&&inXRange);
-    }
-    
-    void adjustSize(float pXPosition, float pYPosition){
-        float minY  = pYPosition-NEAR_SIZE;
-        float maxY  = pYPosition+NEAR_SIZE;
-
-        initialY = (initialY < minY)  ? minY:initialY;
-        finalY = (finalY > maxY) ? maxY:finalY;
-        return;
     }
 
     void convertToAbs(){
@@ -199,24 +173,6 @@ public:
         }
         return (inXRange&&inYRange);
     }
-    /*void adjustSize(float pXPosition, float pYPosition){
-        float minX  = pXPosition-NEAR_SIZE;
-        float maxX  = pXPosition+NEAR_SIZE;
-        float minY  = pYPosition-NEAR_SIZE;
-        float maxY  = pYPosition+NEAR_SIZE;
-
-        initialX = (initialX<minX) ? minX:initialX;
-        finalX   = (finalX>maxX) ? maxX:finalX;
-        if(INCREASING){
-            initialY = (initialY>maxY) ? maxY:initialY;
-            finalY   = (finalY<minY) ? minY:finalY; 
-        }
-        else{
-            initialY = (initialY<minY) ? minY:initialY;
-            finalY   = (finalY>maxY) ? maxY:finalY; 
-        }
-        return;
-    }*/
 
     void convertToAbs(){
         finalY += initialY;
@@ -266,24 +222,6 @@ public:
         bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
         return (inXRange&&(inCtr1Range||inCtr2Range));
     }
-
-    /*void adjustSize(float pXPosition, float pYPosition){
-        float minX  = pXPosition-NEAR_SIZE;
-        float maxX  = pXPosition+NEAR_SIZE;
-        float minY  = pYPosition-NEAR_SIZE;
-        float maxY  = pYPosition+NEAR_SIZE;
-
-        initialX = (initialX < minX)  ? minX:initialX;
-        finalX = (finalX > maxX) ? maxX:finalX;
-        initialY = (initialY < minY)  ? minY:initialY;
-        finalY = (finalY > maxY) ? maxY:finalY;
-
-        float xInflectionDistance = xControlPoint1-pXPosition;
-        xControlPoint1 += (xInflectionDistance>NEAR_SIZE) ? xInflectionDistance:0;
-
-        float yInflectionDistance = yControlPoint1-pYPosition;
-        yControlPoint1 += (yInflectionDistance>NEAR_SIZE) ? yInflectionDistance:0;
-    }*/
 
     void setColor(string pColor){
         color = pColor;
@@ -348,24 +286,6 @@ public:
         bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
         return (inXRange&&(inCtr1Range||inCtr2Range));
     }
-
-    /*void adjustSize(float pXPosition, float pYPosition){
-        float minX  = pXPosition-NEAR_SIZE;
-        float maxX  = pXPosition+NEAR_SIZE;
-        float minY  = pYPosition-NEAR_SIZE;
-        float maxY  = pYPosition+NEAR_SIZE;
-
-        initialX = (initialX < minX)  ? minX:initialX;
-        finalX = (finalX > maxX) ? maxX:finalX;
-        initialY = (initialY < minY)  ? minY:initialY;
-        finalY = (finalY > maxY) ? maxY:finalY;
-
-        float xInflectionDistance = xControlPoint1-pXPosition;
-        xControlPoint1 += (xInflectionDistance>NEAR_SIZE) ? xInflectionDistance:0;
-
-        float yInflectionDistance = yControlPoint1-pYPosition;
-        yControlPoint1 += (yInflectionDistance>NEAR_SIZE) ? yInflectionDistance:0;
-    }*/
 
     void setColor(string pColor){
         color = pColor;
@@ -460,24 +380,6 @@ public:
         return (inXRange&&(inCtr1Range||inCtr2Range));
     }
 
-    /*void adjustSize(float pXPosition, float pYPosition){
-        float minX  = pXPosition-NEAR_SIZE;
-        float maxX  = pXPosition+NEAR_SIZE;
-        float minY  = pYPosition-NEAR_SIZE;
-        float maxY  = pYPosition+NEAR_SIZE;
-
-        initialX = (initialX < minX)  ? minX:initialX;
-        finalX = (finalX > maxX) ? maxX:finalX;
-        initialY = (initialY < minY)  ? minY:initialY;
-        finalY = (finalY > maxY) ? maxY:finalY;
-
-        float xInflectionDistance = xControlPoint1-pXPosition;
-        xControlPoint1 += (xInflectionDistance>NEAR_SIZE) ? xInflectionDistance:0;
-
-        float yInflectionDistance = yControlPoint1-pYPosition;
-        yControlPoint1 += (yInflectionDistance>NEAR_SIZE) ? yInflectionDistance:0;
-    }*/
-
     void convertToAbs(){
         finalY += initialY;
         finalX += initialX;
@@ -539,29 +441,10 @@ public:
     bool isInRange(float pXPosition, float pYPosition){
         bool inXRange = (minX<=(pXPosition+NEAR_SIZE)&&maxX>=(pXPosition-NEAR_SIZE));
         bool inYRange = (minY<=(pYPosition+NEAR_SIZE)&&maxY>=(pYPosition-NEAR_SIZE));
-        //bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
-        //bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
-        //return (inXRange&&(inCtr1Range||inCtr2Range));
-        return (inXRange&&inYRange);
+        bool inCtr1Range = (yControlPoint1<=(pYPosition+NEAR_SIZE)&&yControlPoint1>=(pYPosition-NEAR_SIZE));
+        bool inCtr2Range = (yControlPoint2<=(pYPosition+NEAR_SIZE)&&yControlPoint2>=(pYPosition-NEAR_SIZE));
+        return (inXRange&&(inCtr1Range||inCtr2Range));
     }
-
-    /*void adjustSize(float pXPosition, float pYPosition){
-        float minX  = pXPosition-NEAR_SIZE;
-        float maxX  = pXPosition+NEAR_SIZE;
-        float minY  = pYPosition-NEAR_SIZE;
-        float maxY  = pYPosition+NEAR_SIZE;
-
-        initialX = (initialX < minX)  ? minX:initialX;
-        finalX = (finalX > maxX) ? maxX:finalX;
-        initialY = (initialY < minY)  ? minY:initialY;
-        finalY = (finalY > maxY) ? maxY:finalY;
-
-        float xInflectionDistance = xControlPoint1-pXPosition;
-        xControlPoint1 += (xInflectionDistance>NEAR_SIZE) ? xInflectionDistance:0;
-
-        float yInflectionDistance = yControlPoint1-pYPosition;
-        yControlPoint1 += (yInflectionDistance>NEAR_SIZE) ? yInflectionDistance:0;
-    }*/
     
     void convertToAbs(){
         finalY += initialY;

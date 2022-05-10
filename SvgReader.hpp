@@ -1,8 +1,8 @@
 #include "Observer.hpp"
 #include "SvgPath.hpp"
 #include "Macros.hpp"
-#include "rapidxml/rapidxml_ext.hpp" //Clases para manejo del DOM
-#include "rapidxml/rapidxml_utils.hpp" //Clase File
+#include "rapidxml/rapidxml_ext.hpp" 
+#include "rapidxml/rapidxml_utils.hpp" 
 #include <sstream>
 #include <fstream>
 using namespace rapidxml;
@@ -33,16 +33,16 @@ public:
    }
 
    void loadSvg(char pSvgName[]){
-      file<> file(pSvgName); // Lee y carga el archivo en memoria
-      xml_document<> svgDoc; //Raíz del árbol DOM
-      svgDoc.parse<0>(file.data()); //Parsea el XML en un DOM
+      file<> file(pSvgName); 
+      xml_document<> svgDoc; 
+      svgDoc.parse<0>(file.data()); 
       extractSize(&svgDoc); //Gets svgWidth, svgHeight.
 	   xml_node<>* pathNode = svgDoc.first_node();
 	   vector<SvgPath*> svgPathVector;
 	   extractSvgPaths(pathNode, &svgPathVector);
       svgPath = svgPathVector;
    }
-   //Recorre el elemento raíz del documento
+   //Obtains the dimentions of the SVG.
    void extractSize(xml_document<>* doc){
    xml_node<>* node = doc->first_node();
       for (xml_attribute<>* attrib = node->first_attribute(); attrib != NULL; attrib = attrib->next_attribute()){
@@ -81,18 +81,13 @@ public:
             int redInt = (stoi(redStr,0, 16)/NEAR_COLOR);
             int greenInt = (stoi(greenStr,0, 16)/NEAR_COLOR);
             int blueInt = (stoi(blueStr,0, 16)/NEAR_COLOR);
-            //Si algún RGB se parece al de los buscados.
+            //Compare the path color to the colors searched, if is similar proccess the path.
             if(redBools[redInt] || greenBools[greenInt] || blueBools[blueInt]){
                string dAttribute = node->first_attribute("d")->value();
-               //string widthAttribute = node->first_attribute("stroke-width")->value();
                pathInstructions = convertStrToIns(dAttribute);
-               //cout<<"ADI: "<<i<< " N_Instrucc: "<<pathInstructions.size()<< endl;
-               //float width = stof(widthAttribute);
                pathPtr = new SvgPath(pathInstructions, colorAttribute);
                assignInitialPoints(pathPtr->getInstructions());
                pPathVector->push_back(pathPtr);
-               //pathPtr->printAttributes();
-               //extractSvgPaths(node, pPathVector);
             }
          }
       }
